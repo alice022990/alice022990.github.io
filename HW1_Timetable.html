@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            text-align: center;
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 700px;
+            height: 730px;
+            border: 3px double;
+            outline: 2px solid;
+        }
+        td, th {
+            border: 1px solid;
+        }
+        .vertical {
+            -webkit-writing-mode: vertical-lr;
+            writing-mode: vertical-lr;
+        }
+        .bigger-size {
+            font-size: 20px;
+            margin: 0 0 12px;
+            display: inline-block;
+        }
+        thead tr td {
+            padding: 8px;
+            width: 35px;
+        }
+        /* .morning td:first-child:not([rowspan]) ~ td:nth-of-type(n+3){
+            vertical-align:bottom; 
+        }
+        .afternoon tr:nth-child(even) td:nth-child(n+3){
+            vertical-align:bottom; 
+        } */
+    </style>
+</head>
+
+<body>
+    <table>
+        <thead>
+            <tr>
+                <td>午別</td>
+                <td>節次</td>
+                <td>時間</td>
+                <th>一</th>
+                <th>二</th>
+                <th>三</th>
+                <th>四</th>
+                <th>五</th>
+            </tr>
+        </thead>
+        <tbody class="morning">
+            <tr>
+                <td rowspan="4" class="vertical">上午</td>
+                <td>預備</td>
+                <td>08:40 09:00</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>09:00 09:40</td>
+                <td><span class="bigger-size">國語</span><br>任務作業</td>
+                <td><span class="bigger-size">國語</span><br>任務作業</td>
+                <td><span class="bigger-size">數學</span><br>線上教材<br>任務作業</td>
+                <td><span class="bigger-size">彈性</span><br>任務作業</td>
+                <td><span class="bigger-size">本土語言</span><br>線上教材<br>任務作業</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>10:00 10:40</td>
+                <td><span class="bigger-size">國語</span><br>直播教學</td>
+                <td><span class="bigger-size">數學</span><br>直播教學</td>
+                <td><span class="bigger-size">國語</span><br>直播教學</td>
+                <td><span class="bigger-size">國語</span><br>直播教學</td>
+                <td><span class="bigger-size">數學</span><br>直播教學</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>11:00 11:40</td>
+                <td><span class="bigger-size">數學</span><br>線上教材<br>任務作業</td>
+                <td><span class="bigger-size">生活1</span><br>線上教材</td>
+                <td><span class="bigger-size">童玩</span><br>錄播教學</td>
+                <td><span class="bigger-size">生活2</span><br>任務作業</td>
+                <td><span class="bigger-size">國語</span><br>線上教材<br>任務作業</td>
+            </tr>
+        </tbody>
+        <tr>
+            <td>中午</td>
+            <td></td>
+            <td>12:00 13:20</td>
+            <td colspan="5">午餐及午休</td>
+        </tr>
+        <tbody class="afternoon">
+            <tr>
+                <td rowspan="4" class="vertical">下午</td>
+                <td></td>
+                <td>13:30 14:10</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>14:20 15:00</td>
+                <td><span class="bigger-size">體育</span><br>線上教材<br>任務作業</td>
+                <td><span class="bigger-size">生活3</span><br>線上教材<br>任務作業</td>
+                <td><span class="bigger-size">體育</span><br>線上教材<br>任務作業</td>
+                <td><span class="bigger-size">生活3</span><br>線上教材<br>任務作業</td>
+                <td><span class="bigger-size">國際教育</span><br>線上教材<br>任務作業</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>15:00 15:20</td>
+                <td colspan="5">休息一下，跳跳繩</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>15:20 16:00</td>
+                <td><span class="bigger-size">生活2</span><br>任務作業</td>
+                <td><span class="bigger-size">健康</span><br>任務作業</td>
+                <td></td>
+                <td><span class="bigger-size">生活3</span><br>線上教材<br>任務作業</td>
+                <td><span class="bigger-size">彈性</span><br>任務作業</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
