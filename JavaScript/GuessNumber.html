@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .wrap{
+            max-width: 300px;
+            margin: 10px auto;
+            background-color: antiquewhite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+            padding: 5px 0;
+        }
+        .label .title{
+            margin-bottom: 5px;
+        }
+        .wrap input{
+            margin: 5px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="label">
+            <p class="title">請輸入1-100的數字</p>
+        </div>
+        <button class="btn start">開始遊戲</button>
+        <input type="text" id="ans_guess">
+        <div class="btnlist">
+            <button class="btn input">猜數字</button>
+            <button class="btn ans">偷看答案</button>
+        </div>
+    </div>
+    <script>
+        const myInput = document.querySelector('#ans_guess');
+        const startBtn = document.querySelector('.btn.start');
+        const ansBtn = document.querySelector('.btn.ans');
+        const inputBtn = document.querySelector('.btn.input');
+        const title = document.querySelector('.title');
+
+        let randomAns;
+        let minNum = 1;
+        let maxNum = 100;
+
+        myInput.disabled = true;
+        inputBtn.disabled = true;
+        ansBtn.disabled = true;
+        // ansBtn.style.visibility = "hidden";
+        // ansBtn.style.display = "none";
+        
+        function startGame(){
+            randomAns = Math.floor(Math.random() * maxNum) + minNum;
+            startBtn.style.display = "none";
+            // startBtn.setAttribute("disabled", "");
+            myInput.disabled = false;
+            inputBtn.disabled = false;
+            ansBtn.disabled = false;
+            title.textContent = `請輸入1-100的數字`;
+        }
+
+        startBtn.addEventListener("click",startGame);
+        
+        function guessNum () {
+            try {
+                let guess = myInput.value
+                if (guess == false || isNaN(guess)) {
+                    throw new error;
+                }
+                if( guess == randomAns ){
+                    startBtn.style.display = "inline-block";
+                    // startBtn.removeAttribute("disabled");
+                    startBtn.textContent = "重新一局"
+                    title.textContent = `猜對了，答案是${guess}，再玩一次吧！`;
+                    myInput.value = "";
+                    myInput.disabled = true;
+                    inputBtn.disabled = true;
+                    ansBtn.disabled = true;
+                }
+                else if( guess > randomAns ){
+                    maxNum = myInput.value;
+                    title.textContent = `在${minNum}-${maxNum}之間`;
+                    return
+                }
+                else if( guess < randomAns ){
+                    minNum = myInput.value;
+                    title.textContent = `在${minNum}-${maxNum}之間`;
+                    return
+                }   
+            } catch (error) {
+                window.confirm(`請輸入數字`);
+            }
+        }
+        inputBtn.addEventListener("click", guessNum );
+
+        ansBtn.addEventListener("click",
+            function () { window.confirm(randomAns); }
+        );
+
+    </script>
+</body>
+
+</html>
