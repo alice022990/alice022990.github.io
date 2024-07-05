@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .greyBG {
+            background-color: #f9f6f5;
+            padding-bottom: 40px;
+        }
+
+        img {
+            width: 100%;
+            vertical-align: top;
+        }
+
+        img:not(.card.active img, .deco .pic img) {
+            border-radius: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .decoTitle {
+            display: flex;
+            flex-direction: column;
+            padding: 1em;
+            margin: 0 auto;
+        }
+
+        .titleBig h1 {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .titleSmall h2 {
+            font-size: 16px;
+        }
+
+        .deco {
+            display: flex;
+            flex-direction: column;
+            padding:0 1em;
+        }
+
+        .deco .pic {
+            box-sizing: border-box;
+            margin: 0 -17px;
+        }
+
+        .deco .txt {
+            margin-top: 30px;
+            margin-bottom: 35%;
+        }
+
+        .deco p span {
+            display: block;
+        }
+
+        .intro {
+            display: flex;
+            flex-direction: column;
+            padding: 1em;
+            margin: 0 auto;
+        }
+
+        .intro .pic img {
+            margin-top: -35%;
+        }
+
+        .intro .txt h3 {
+            margin: 25px 0 15px;
+        }
+
+        .intro .txt p {
+            line-height: 2;
+            margin: 10px 0;
+            letter-spacing: 1.2px;
+            font-size: 14px;
+        }
+
+        .intro .txt a {
+            color: #f65936;
+            font-size: 14px;
+        }
+
+        .intro .txt a::after {
+            vertical-align: middle;
+            content: "→";
+            color: #f65936;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid #f65936;
+            padding: 2px 0 0 6px;
+            margin: -3px 0px 0px 10px;
+        }
+
+        .about {
+            padding: 0 1em;
+            margin: 0 auto;
+        }
+
+        .about h3 {
+            font-size: 35px;
+            margin: 40px 0px;
+        }
+
+        .about h3 span {
+            color: #f65936;
+        }
+
+        .about h4 {
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .about .itemList {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-top: 3em;
+        }
+
+        .about .item {
+            --itemWidth: 296px;
+            width: var(--itemWidth);
+            border-radius: 10px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .item .txt {
+            color: white;
+            padding: 20px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: .5s;
+        }
+
+        .item .txt p {
+            opacity: 0;
+            font-size: 14px;
+            margin: 0px 0 10px;
+        }
+
+        .item .txt span {
+            font-size: 12px;
+        }
+
+        .itemBtn {
+            display: block;
+            width: fit-content;
+            border: 1px solid;
+            padding: 10px 10px 10px 14px;
+            border-radius: 50px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .itemBtn::after {
+            vertical-align: middle;
+            content: "→";
+            color: #f65936;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid #f65936;
+            padding: 2px 0 0 6px;
+            margin: 0px 0px 0 15px;
+        }
+
+        .item .txt .itemTitle {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .item:hover .txt {
+            background-color: #000a;
+            border-radius: 10px;
+        }
+
+        .item:hover p {
+            opacity: 1;
+        }
+
+        .item:hover .itemBtn {
+            background-color: white;
+            color: black;
+        }
+
+        .item:hover .itemBtn::after {
+            color: white;
+            background-color: #f65936;
+            padding: 2px 0 0 6px;
+            margin: 0px 0px 0 15px;
+        }
+
+        .main {
+            margin-top: 40px;
+        }
+
+        .borderTitle {
+            margin: 40px 0 0;
+            margin: 0 auto;
+        }
+
+        .borderTitle h3 {
+            border-top: 2px solid #202124;
+            font-size: 21px;
+            padding-top: 10px;
+            margin: 0px 10px;
+        }
+
+        .container {
+            padding: 0px 15px;
+            margin: 0 auto;
+        }
+
+        .postTitle {
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            margin: 3em 0 2em;
+        }
+
+        .postTitle span {
+            display: block;
+            color: #6c6d6e;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .postTitle a {
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #f65936;
+        }
+
+        .postTitle a::after {
+            vertical-align: middle;
+            content: "→";
+            color: #f65936;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid #f65936;
+            padding: 2px 0 0 6px;
+            margin: -3px 0px 0px 10px;
+        }
+
+        .cardGrid {
+            display: grid;
+            grid-template: repeat(3, auto)/repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .card h5 {
+            margin: 15px 0 5px;
+        }
+
+        .card time {
+            font-size: 12px;
+            color: #222;
+            margin: 15px 0 0;
+        }
+
+        .card .pic img {
+            transition: 0.4s;
+        }
+
+        .card a:hover .pic img {
+            opacity: 0.6;
+        }
+
+        .card.active {
+            grid-column-end: span 2;
+        }
+
+        .card.active .pic {
+            box-sizing: border-box;
+            margin: 0 -15px;
+        }
+
+        .card.active .txt h5 {
+            font-size: 18px;
+        }
+
+        .card.active .txt p {
+            font-size: 13px;
+        }
+
+        @media screen and (min-width:768px) {
+            .greyBG {
+                padding: 40px 0 100px;
+            }
+            .decoTitle{
+                flex-direction: column-reverse;
+                padding: 2em 4em 0;
+                margin-bottom: -30px;
+                position: relative;
+            }
+            .titleBig h1{
+                font-size: 95px;
+                margin-bottom: 0;
+                line-height: 100%;
+            }
+            .titleSmall h2 {
+                font-size: 24px;
+            }
+            .deco p{
+                line-height: 2;
+            }
+            .deco p span {
+                display: inline;
+            }
+            .about h3 {
+                font-size: 78px;
+                line-height: 82px;
+                margin: 1em 0;
+            }
+
+            .about .item {
+                --itemWidth: 307px;
+            }
+
+            .item .pic img {
+                height: 550px;
+            }
+
+            .item .txt .itemTitle {
+                font-size: 26px;
+                font-weight: bold;
+            }
+
+            .item .txt p {
+                margin: 180px 0 10px;
+            }
+
+            .main {
+                padding: 60px 0 0;
+            }
+
+            .borderTitle h3 {
+                font-size: 24px;
+            }
+
+            .postTitle h4 {
+                font-size: 26px;
+            }
+
+            .postTitle span {
+                display: inline;
+                margin-left: 15px;
+            }
+
+            .cardGrid {
+                grid-template: repeat(2, auto)/repeat(4, 1fr);
+                gap: 30px;
+            }
+
+            .card.active {
+                grid-row-end: span 2;
+            }
+
+            .card.active .txt {
+                display: grid;
+                grid-template: repeat(2, 1fr)/repeat(2, auto);
+                gap: 20px;
+            }
+
+            .card.active .pic {
+                box-sizing: content-box;
+                margin: 0;
+            }
+
+            .card.active img {
+                border-radius: 10px;
+            }
+
+            .card.active .txt h5 {
+                grid-row-end: span 2;
+                font-size: 25px;
+            }
+
+            .card.active .txt p {
+                margin-top: 15px;
+            }
+
+            .reverse .card.active {
+                grid-area: 1/3/span 2/span 2;
+            }
+
+        }
+
+        @media screen and (min-width:1024px) {
+            .greyBG {
+                padding: 60px 0 100px;
+            }
+            .decoTitle{
+                padding: 2em 2em 0;
+                margin-bottom: -35px;
+                flex-direction: row-reverse;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+            }
+            .titleBig h1{
+                font-size: 110px;
+            }
+            .titleSmall h2{
+                font-size: 20px;
+            }
+            .deco{
+                flex-direction: row;
+            }
+            .deco .pic{
+                width: 70%;
+                max-width: 1200px;
+            }
+            .deco .txt{
+                margin: auto;
+            }
+            .deco .txt p{
+                writing-mode: vertical-rl;
+            }
+            .intro {
+                flex-direction: row;
+                gap: 40px;
+                max-width: calc(1250px + 2rem)
+            }
+
+            .intro .pic,
+            .intro .txt {
+                flex-grow: 1;
+                flex-basis: 0;
+                min-width: 0;
+            }
+
+            .intro .pic {
+                position: relative;
+                bottom: 10px;
+            }
+
+            .intro .txt h3 {
+                font-size: 32px;
+            }
+
+            .intro .txt span {
+                display: block;
+            }
+
+            .intro .txt p {
+                margin: 2em 0 2em;
+            }
+
+            .about {
+                max-width: calc(1250px + 2rem)
+            }
+
+            .about .itemList {
+                justify-content: center;
+            }
+
+            .about .item {
+                --itemWidth: 315px;
+            }
+
+            .main {
+                padding: 60px 0 0;
+            }
+
+            .postTitle {
+                padding-top: 20px;
+                margin: 4em 0 2em;
+            }
+
+            .borderTitle {
+                max-width: calc(1250px + 2rem)
+            }
+
+            .container {
+                max-width: calc(1250px + 2rem)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="decoTitle">
+        <div class="titleBig">
+            <h1>Re-Imagine<br>Hawai‘i</h1>
+        </div>
+        <div class="titleSmall">
+            <h2>ハワイを想うことは、<br>ハワイの未来を創ること。</h2>
+        </div>
+    </div>
+    <div class="deco">
+        <div class="pic">
+            <img src="/HW4_Hawaii/main.jpg" alt="main">
+        </div>
+        <div class="txt">
+            <p>美しい楽園ハワイは、<span></span>永遠ではありません。
+                <br>山から海まで、<span></span>ハワイに生きる美しい自然や文化に
+                <br>「マラマ = 思いやりの心」を持って接すること。
+                <br>レスポンシブル・ツーリズムは、<span></span>そんな思いやりの心を
+                <br>旅の中で実践していく、<span></span>新しい観光のカタチです。
+                <br>ハワイが何十年後も、何百年後も、<span></span>素晴らしい楽園であるよう
+                <br>旅行者のみなさんだから<span></span>できることがあります。
+            </p>
+        </div>
+    </div>
+    <section class="greyBG">
+        <div class="intro">
+            <div class="pic">
+                <img src="/HW4_Hawaii/turtle.jpg" alt="turtle">
+            </div>
+            <div class="txt">
+                <h3>美しいハワイを<span></span>未来へとつなぐために<span></span>わたしたちができること</h3>
+                <p>ハワイは世界の絶滅危惧種の宝庫と呼ばれるほど、貴重な生物がたくさん生息しています。ウミガメ、イルカ、クジラ、サンゴ礁。これらを守るためにも、知ってもらいたいことやルールがあります。これからは旅行者にも、ハワイの島々の自然や文化を守り、現地住民が大切にする場所を敬い、美しいハワイを未来へつなげていく行動が求められます。<br>「レスポンシブル・ツーリズム」一緒にはじめませんか。
+                </p>
+                <a href="#">マラマハワイとは</a>
+            </div>
+        </div>
+        <div class="about">
+            <h3>What We Can Do to
+                <br><span>Keep Hawai‘i Beautiful</span>
+                <br>for the Future.
+            </h3>
+            <h4>ABOUT MĀLAMA HAWAI‘I</h4>
+            <div class="itemList">
+                <div class="item">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/about_bg01.jpg" alt="about_bg01">
+                        </div>
+                        <div class="txt">
+                            <div class="title">
+                                <span class="itemTitle">責任ある旅行“レスポンシブル・ツーリズム”について</span>
+                                <span class="itemBtn">詳しく見る</span>
+                            </div>
+                            <div class="content">
+                                <p>観光客もツーリズムを構成する要素であると捉え、観光客が意識や行動に責任を持つことで、より良い観光地形成を行っていこうという考え方です。</p>
+                                <span>WHAT IS “RESPONSIBLE TOURISM”</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/about_bg02.jpg" alt="about_bg02">
+                        </div>
+                        <div class="txt">
+                            <div class="title">
+                                <span class="itemTitle">ハワイ独自の取り組み“アロハプラスチャレンジ”について</span>
+                                <span class="itemBtn">詳しく見る</span>
+                            </div>
+                            <div class="content">
+                                <p>SDG’sを基準にハワイ州が独自のゴールを設定した特別プログラムです。官民一体となり経済、社会、環境の側面からを持続可能な社会を目指します。</p>
+                                <span>ABOUT “ALOHA + CHALLENGE”</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/about_bg03.jpg" alt="about_bg03">
+                        </div>
+                        <div class="txt">
+                            <div class="title">
+                                <span class="itemTitle">ハワイ州観光局からのメッセージ</span>
+                                <span class="itemBtn">詳しく見る</span>
+                            </div>
+                            <div class="content">
+                                <p>歴史的にも深い関係を持つ日本とハワイが、これからも共に支え合い、高め合う良い関係が継続できるようハワイ州観光局もサポートしていきます。</p>
+                                <span>MESSAGE FROM HAWAI‘I TOURISM JAPAN</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="main">
+        <div class="borderTitle">
+            <h3>LATEST</h3>
+        </div>
+        <div class="container">
+            <div class="postTitle">
+                <h4>旅行者にできること<span>What Travelers Can Do</span></h4>
+                <a href="#">すべて見る</a>
+            </div>
+            <div class="cardGrid">
+                <div class="card active">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid1-1.png" alt="grid1-1">
+                        </div>
+                        <div class="txt">
+                            <h5>【4月22日はアースデイ】ハワイでの環境にやさしいイベントを紹介！</h5>
+                            <p>毎年4月22日はアースデイ(Earth Day)！地球や環境のことを考え、一人一人が何ができるかを考えたり行動を起こすために生まれた1日。1970年にユネスコに</p>
+                            <time datetime="">2024.03.21</time>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid1-2.jpg" alt="grid1-2">
+                        </div>
+                        <div class="txt">
+                            <h5>プリンス・クヒオ・デイ・セレブレーション（Prince Kuhio Day Celebration）</h5>
+                            <time datetime="">2024.03.21</time>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid1-3.jpg" alt="grid1-3">
+                        </div>
+                        <div class="txt">
+                            <h5>11月はサンゴ白化啓発月間　〜日常でできること〜</h5>
+                            <time datetime="">2023.11.09</time>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid1-4.png" alt="grid1-4">
+                        </div>
+                        <div class="txt">
+                            <h5>マウイ島の山火事救援金、日本円で受付開始</h5>
+                            <time datetime="">2023.08.18</time>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid1-5.png" alt="grid1-5">
+                        </div>
+                        <div class="txt">
+                            <h5>2023年7月後半～9月にハワイで開催されるカルチャーイベント</h5>
+                            <time datetime="">2023.07.20</time>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="postTitle">
+                <h4>企業の取組み<span>Corporate Initiatives</span></h4>
+                <a href="#">すべて見る</a>
+            </div>
+            <div class="cardGrid reverse">
+                <div class="card active">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid2-1.jpg" alt="grid2-1">
+                        </div>
+                        <div class="txt">
+                            <h5>シーライフパーク、ホヌ（ウミガメ）保護・繁殖プログラム発足50周年プログラム開催</h5>
+                            <p>オアフ島東海岸にある海洋テーマパーク「シーライフ・パーク」では、今年ホヌ（ウミガメ）保護・繁殖プログラム発足50周年を迎えました。これを機に環境保護団体「808</p>
+                            <time datetime="">2024.01.15</time>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid2-2.jpeg" alt="grid2-2">
+                        </div>
+                        <div class="txt">
+                            <h5>【チームJALハワイ】ビーチクリーンアップ活動で地元コミュニティに貢献</h5>
+                            <time datetime="">2022.01.02</time>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid2-3.jpg" alt="grid2-3">
+                        </div>
+                        <div class="txt">
+                            <h5>廃棄された漁網を服に生まれ変わらせる！海を守ろうと活動する人々が主役のドキュメンタリーを作るプロジェクトをサポートしませんか？</h5>
+                            <time datetime="">2022.07.27</time>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid2-4.jpg" alt="grid2-4">
+                        </div>
+                        <div class="txt">
+                            <h5>第33回タートル・インディペンデンス・デイ開催</h5>
+                            <time datetime="">2022.07.01</time>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#">
+                        <div class="pic">
+                            <img src="/HW4_Hawaii/grid2-5.jpg" alt="grid2-5">
+                        </div>
+                        <div class="txt">
+                            <h5>「シーアスパラガス」を生産している「オラカイ」のサステナブルな取り組み</h5>
+                            <time datetime="">2022.06.15</time>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
