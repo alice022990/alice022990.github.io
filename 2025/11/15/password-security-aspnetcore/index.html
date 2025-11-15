@@ -27,7 +27,7 @@
 <meta property="og:description" content="深入解析密碼儲存的安全機制，包含 Hash、Salt、Encoding、Encryption 的差異，以及 ASP.NET Core PasswordHasher 的實作原理與使用方式。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-11-15T09:07:41.000Z">
-<meta property="article:modified_time" content="2025-11-15T09:09:22.745Z">
+<meta property="article:modified_time" content="2025-11-15T09:12:38.765Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="ASP.NET Core">
 <meta property="article:tag" content="資訊安全">
@@ -184,7 +184,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2025-11-15 17:07:41 / Modified: 17:09:22" itemprop="dateCreated datePublished" datetime="2025-11-15T17:07:41+08:00">2025-11-15</time>
+      <time title="Created: 2025-11-15 17:07:41 / Modified: 17:12:38" itemprop="dateCreated datePublished" datetime="2025-11-15T17:07:41+08:00">2025-11-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,13 +275,8 @@
 <td>Hash(123456, K!9Z)</td>
 <td>CCB89</td>
 </tr>
-<tr>
-<td>即使密碼相同，在沒有取得鹽，也不知道鹽是加在密碼的哪個位置的情形下，駭客也難以在短時間內破解密碼。</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
 </tbody></table>
+<p>即使密碼相同，在沒有取得鹽，也不知道鹽是加在密碼的哪個位置的情形下，駭客也難以在短時間內破解密碼。</p>
 <h2 id="ASP-NET-Core-怎麼安全儲存密碼？"><a href="#ASP-NET-Core-怎麼安全儲存密碼？" class="headerlink" title="ASP.NET Core 怎麼安全儲存密碼？"></a>ASP.NET Core 怎麼安全儲存密碼？</h2><p>在 ASP.NET Core，可以利用 Identity library 中的 <code>PasswordHasher&lt;TUser&gt;</code> 類別來處理密碼雜湊跟驗證</p>
 <h3 id="PasswordHasher"><a href="#PasswordHasher" class="headerlink" title="PasswordHasher&lt;TUser&gt;"></a><code>PasswordHasher&lt;TUser&gt;</code></h3><h4 id="核心概念與功能"><a href="#核心概念與功能" class="headerlink" title="核心概念與功能"></a>核心概念與功能</h4><ul>
 <li>主要用途與方法：<ol>
