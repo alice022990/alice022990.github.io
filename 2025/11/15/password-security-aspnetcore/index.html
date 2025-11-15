@@ -27,10 +27,11 @@
 <meta property="og:description" content="深入解析密碼儲存的安全機制，包含 Hash、Salt、Encoding、Encryption 的差異，以及 ASP.NET Core PasswordHasher 的實作原理與使用方式。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-11-15T09:07:41.000Z">
-<meta property="article:modified_time" content="2025-11-15T09:22:57.930Z">
+<meta property="article:modified_time" content="2025-11-15T09:25:37.551Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="ASP.NET Core">
 <meta property="article:tag" content="資訊安全">
+<meta property="article:tag" content="密碼">
 <meta name="twitter:card" content="summary">
 
 
@@ -127,7 +128,7 @@
         <span class="site-state-item-name">categories</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -184,7 +185,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2025-11-15 17:07:41 / Modified: 17:22:57" itemprop="dateCreated datePublished" datetime="2025-11-15T17:07:41+08:00">2025-11-15</time>
+      <time title="Created: 2025-11-15 17:07:41 / Modified: 17:25:37" itemprop="dateCreated datePublished" datetime="2025-11-15T17:07:41+08:00">2025-11-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -290,11 +291,11 @@
 </li>
 </ul>
 </li>
-<li><p><code>VerifyHashedPassword(TUser user, string hashedPassword,   string providedPassword)</code>：驗證使用者密碼</p>
+<li><p><code>VerifyHashedPassword(TUser user, string hashedPassword,</code><br> <code>string providedPassword)</code>：驗證使用者密碼</p>
 <ul>
 <li>比較使用者輸入的密碼（<code>providedPassword</code>）是否與儲存在資料庫中的雜湊密碼（<code>hashedPassword</code>）匹配。</li>
 <li>過程：<ol>
-<li>解析字串: <code>PasswordHasher</code> 會接收儲存的 <code>hashedPassword</code> 字串。它會解析（Parse）這個複合字串，從中提取出：<ul>
+<li>解析字串: <code>PasswordHasher</code> 會接收儲存的 <code>hashedPassword</code> 字串。它會解析這個複合字串，從中提取出：<ul>
 <li>當初用於雜湊的<strong>鹽值</strong>。</li>
 <li>當初使用的<strong>迭代次數</strong>（Iteration Count）和其他配置參數。</li>
 <li>儲存的<strong>最終雜湊結果</strong>。</li>
@@ -374,6 +375,7 @@
           <div class="post-tags">
               <a href="/tags/ASP-NET-Core/" rel="tag"># ASP.NET Core</a>
               <a href="/tags/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" rel="tag"># 資訊安全</a>
+              <a href="/tags/%E5%AF%86%E7%A2%BC/" rel="tag"># 密碼</a>
           </div>
 
         
