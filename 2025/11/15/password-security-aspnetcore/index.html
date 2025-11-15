@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="深入解析密碼儲存的安全機制，包含 Hash、Salt、Encoding、Encryption 的差異，以及 ASP.NET Core PasswordHasher 的實作原理與使用方式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="password-security-aspnetcore">
+<meta property="og:url" content="http://example.com/2025/11/15/password-security-aspnetcore/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="深入解析密碼儲存的安全機制，包含 Hash、Salt、Encoding、Encryption 的差異，以及 ASP.NET Core PasswordHasher 的實作原理與使用方式。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-11-15T09:07:41.000Z">
+<meta property="article:modified_time" content="2025-11-15T09:09:22.745Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ASP.NET Core">
+<meta property="article:tag" content="資訊安全">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/11/15/password-security-aspnetcore/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/11/15/password-security-aspnetcore/","path":"2025/11/15/password-security-aspnetcore/","title":"password-security-aspnetcore"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>password-security-aspnetcore | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E9%97%9C%E5%90%8D%E8%A9%9E%E4%BB%8B%E7%B4%B9"><span class="nav-number">1.</span> <span class="nav-text">相關名詞介紹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E7%B7%A8%E7%A2%BC%EF%BC%88Encoding%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">什麼是編碼（Encoding）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E5%8A%A0%E5%AF%86%EF%BC%88Encryption%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">什麼是加密（Encryption）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E9%9B%9C%E6%B9%8A-%EF%BC%88Hash%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">什麼是雜湊 （Hash）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E5%8A%A0%E9%B9%BD-%EF%BC%88Salt%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">什麼是加鹽 （Salt）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E9%B9%BD%E5%BE%8C"><span class="nav-number">1.4.1.</span> <span class="nav-text">加鹽後</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ASP-NET-Core-%E6%80%8E%E9%BA%BC%E5%AE%89%E5%85%A8%E5%84%B2%E5%AD%98%E5%AF%86%E7%A2%BC%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">ASP.NET Core 怎麼安全儲存密碼？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PasswordHasher"><span class="nav-number">2.1.</span> <span class="nav-text">PasswordHasher&lt;TUser&gt;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E8%88%87%E5%8A%9F%E8%83%BD"><span class="nav-number">2.1.1.</span> <span class="nav-text">核心概念與功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.2.</span> <span class="nav-text">如何使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%B8%E7%9A%84%E6%99%82%E5%80%99%E7%9A%84%E7%96%91%E6%83%91"><span class="nav-number">2.1.3.</span> <span class="nav-text">學的時候的疑惑</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">參考資料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/11/15/password-security-aspnetcore/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="password-security-aspnetcore | Hexo">
+      <meta itemprop="description" content="深入解析密碼儲存的安全機制，包含 Hash、Salt、Encoding、Encryption 的差異，以及 ASP.NET Core PasswordHasher 的實作原理與使用方式。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          password-security-aspnetcore
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-11-15 17:07:41 / Modified: 17:09:22" itemprop="dateCreated datePublished" datetime="2025-11-15T17:07:41+08:00">2025-11-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/" itemprop="url" rel="index"><span itemprop="name">後端開發</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">資訊安全</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">深入解析密碼儲存的安全機制，包含 Hash、Salt、Encoding、Encryption 的差異，以及 ASP.NET Core PasswordHasher 的實作原理與使用方式。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>剛開始學習密碼儲存時，我一直搞不清楚這些名詞： </p>
+<ul>
+<li>密碼要「編碼」還是「加密」？</li>
+<li>什麼是「雜湊」？跟加密有什麼不同？</li>
+<li>為什麼還要「加鹽」？鹽又是什麼？</li>
+</ul>
+<p>這篇文章會分享我的學習心得，從最基礎的概念開始，一步步帶你了解：</p>
+<ul>
+<li>編碼、加密、雜湊、加鹽是什麼 </li>
+<li>在 ASP.NET Core 如何安全地處理密碼</li>
+</ul>
+<h2 id="相關名詞介紹"><a href="#相關名詞介紹" class="headerlink" title="相關名詞介紹"></a>相關名詞介紹</h2><h3 id="什麼是編碼（Encoding）"><a href="#什麼是編碼（Encoding）" class="headerlink" title="什麼是編碼（Encoding）"></a>什麼是編碼（Encoding）</h3><p>編碼是把資料換一種<strong>表示方式</strong>，讓資料能安全傳輸或顯示。但內容不會變、可回推原本的資料。<br>常見的例子：</p>
+<ol>
+<li>Base64 編碼：把二進位資料轉成可安全傳輸的字串。</li>
+<li>URL Encoding：把網址中的特殊字元（空白、標點符號等等）編碼成符合 URL 的格式，讓網址能安全傳輸。</li>
+</ol>
+<h3 id="什麼是加密（Encryption）"><a href="#什麼是加密（Encryption）" class="headerlink" title="什麼是加密（Encryption）"></a>什麼是加密（Encryption）</h3><p>加密是把明文結合<strong>加密演算法 + 密鑰</strong>，轉成密文，只要有密鑰就可以還原明文。</p>
+<ul>
+<li>因為「可解密」，不適合直接用來儲存密碼。</li>
+<li>攻擊者只要掌握加密方法跟拿到密鑰，就能還原所有密碼。</li>
+</ul>
+<h3 id="什麼是雜湊-（Hash）"><a href="#什麼是雜湊-（Hash）" class="headerlink" title="什麼是雜湊 （Hash）"></a>什麼是雜湊 （Hash）</h3><p>雜湊是將資料，透過雜湊函式（hash function）將密碼轉換成一段<strong>不可逆的固定長度字串</strong>，無法從轉換後的 Hash 字串，去推導還原出原本的模樣(原密碼)。<br><strong>同樣的輸入</strong>經過雜湊，一定會得到<strong>一樣的結果</strong>，所以在驗證登入的時候，只要對輸入的密碼進行一樣的雜湊方法，跟資料庫裡面存的 Hash 字串比對是否相同就好。</p>
+<table>
+<thead>
+<tr>
+<th><strong>特性</strong></th>
+<th><strong>說明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>不可逆</td>
+<td>無法從 Hash 字串還原原始密碼</td>
+</tr>
+<tr>
+<td>固定長度</td>
+<td>不管你輸入多長，輸出都是固定長度（例如 SHA-256 固定 64 字）</td>
+</tr>
+<tr>
+<td>要用於比對</td>
+<td>通常用來比對是否一致，而不是還原</td>
+</tr>
+</tbody></table>
+<h3 id="什麼是加鹽-（Salt）"><a href="#什麼是加鹽-（Salt）" class="headerlink" title="什麼是加鹽 （Salt）"></a>什麼是加鹽 （Salt）</h3><p>因為「同樣的密碼」會產生「同樣的 hash」，如果有一張表（彩虹表）記錄明文跟其對應的雜湊值，那駭客得到雜湊值後可以快速查出對應的密碼。<br>為了避免這種狀況，可以對密碼進行「加鹽」，提高暴力破解難度。<br><strong>加鹽</strong>指的是在密碼中任意位置，加上一段隨機字串，再做雜湊。</p>
+<h4 id="加鹽後"><a href="#加鹽後" class="headerlink" title="加鹽後"></a>加鹽後</h4><p>即使兩人密碼相同都是 123456，但系統產生不同 Salt，最終的 hash 依然不同：</p>
+<table>
+<thead>
+<tr>
+<th><strong>密碼</strong></th>
+<th><strong>Salt</strong></th>
+<th><strong>輸入給 Hash Function</strong></th>
+<th><strong>Hash</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>123456</td>
+<td>X7@1</td>
+<td>Hash(123456, X7@1)</td>
+<td>AAA23</td>
+</tr>
+<tr>
+<td>123456</td>
+<td>K!9Z</td>
+<td>Hash(123456, K!9Z)</td>
+<td>CCB89</td>
+</tr>
+<tr>
+<td>即使密碼相同，在沒有取得鹽，也不知道鹽是加在密碼的哪個位置的情形下，駭客也難以在短時間內破解密碼。</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="ASP-NET-Core-怎麼安全儲存密碼？"><a href="#ASP-NET-Core-怎麼安全儲存密碼？" class="headerlink" title="ASP.NET Core 怎麼安全儲存密碼？"></a>ASP.NET Core 怎麼安全儲存密碼？</h2><p>在 ASP.NET Core，可以利用 Identity library 中的 <code>PasswordHasher&lt;TUser&gt;</code> 類別來處理密碼雜湊跟驗證</p>
+<h3 id="PasswordHasher"><a href="#PasswordHasher" class="headerlink" title="PasswordHasher&lt;TUser&gt;"></a><code>PasswordHasher&lt;TUser&gt;</code></h3><h4 id="核心概念與功能"><a href="#核心概念與功能" class="headerlink" title="核心概念與功能"></a>核心概念與功能</h4><ul>
+<li>主要用途與方法：<ol>
+<li><p><code>HashPassword(TUser user, string password)</code>：雜湊密碼</p>
+<ul>
+<li>不僅將使用者提供的純文字密碼轉換成<strong>密碼的雜湊值</strong>，還將所有必要的資訊<strong>打包</strong>成一個單一的字串（包含雜湊值、鹽值和迭代次數等資訊），儲存在資料庫中。<br>例如：<code>版本識別:迭代次數:鹽值:雜湊結果</code></li>
+<li>過程：<ol>
+<li><code>PasswordHasher</code> 內部會生成一個<strong>隨機且唯一的鹽值</strong>（Salt）。</li>
+<li>它會使用這個鹽值和密碼進行 PBKDF2 運算，得到最終的雜湊結果。</li>
+<li>最後，它會將<strong>鹽值本身</strong>連同雜湊結果及其他資訊（如迭代次數）<strong>組合起來</strong>，形成一個字串（通常以 Base64 編碼）。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p><code>VerifyHashedPassword(TUser user, string hashedPassword, string providedPassword)</code>：驗證使用者密碼</p>
+<ul>
+<li>比較使用者輸入的密碼（<code>providedPassword</code>）是否與儲存在資料庫中的雜湊密碼（<code>hashedPassword</code>）匹配。</li>
+<li>過程：<ol>
+<li>解析字串: <code>PasswordHasher</code> 會接收儲存的 <code>hashedPassword</code> 字串。它會解析（Parse）這個複合字串，從中提取出：<ul>
+<li>當初用於雜湊的<strong>鹽值</strong>。</li>
+<li>當初使用的<strong>迭代次數</strong>（Iteration Count）和其他配置參數。</li>
+<li>儲存的<strong>最終雜湊結果</strong>。</li>
+</ul>
+</li>
+<li>重新雜湊: 它會使用<strong>提取出來的鹽值</strong>和<strong>使用者這次輸入的純文字密碼</strong>（<code>providedPassword</code>），執行<strong>完全相同</strong>的雜湊演算法（如 PBKDF2）和迭代次數。</li>
+<li>比較結果: 得到新的雜湊結果後，它會將這個<strong>新生成的雜湊結果</strong>與<strong>儲存的最終雜湊結果</strong>進行位元組（byte）級別的比較。</li>
+<li>返回結果: 如果兩者完全匹配，則驗證成功。</li>
+</ol>
+</li>
+<li>驗證密碼，傳回的結果會是下面三個其中之一<ul>
+<li><code>PasswordVerificationResult.Success</code>：密碼正確</li>
+<li><code>PasswordVerificationResult.SuccessRehashNeeded</code>：密碼正確，但我們需要將雜湊演算法更新為新的演算法。</li>
+<li><code>PasswordVerificationResult.Failed</code>：密碼不正確</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>實作<code>IPasswordHasher&lt;TUser&gt;</code> 介面</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IPasswordHasher</span>&lt;<span class="title">TUser</span>&gt; <span class="keyword">where</span> <span class="title">TUser</span> : <span class="keyword">class</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="built_in">string</span> <span class="title">HashPassword</span>(<span class="params">TUser user, <span class="built_in">string</span> password</span>)</span>;</span><br><span class="line">	<span class="function">PasswordVerificationResult <span class="title">VerifyHashedPassword</span>(<span class="params">TUser user, <span class="built_in">string</span> hashedPassword, <span class="built_in">string</span> providedPassword</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>安全機制<ul>
+<li>使用 <strong>PBKDF2</strong>（Password-Based Key Derivation Function 2）演算法配合 HMAC-SHA256&#x2F;SHA512</li>
+<li>執行<strong>多次迭代</strong>（重複雜湊過程），.NET Core 預設是 10,000 次，使得暴力破解（Brute-Force）攻擊的速度極慢，增加了攻擊者的成本</li>
+</ul>
+</li>
+<li>客製化<ul>
+<li>可以透過設定 <code>IdentityOptions</code> 來調整預設的雜湊行為</li>
+<li>可以建立一個自訂的類別來實作 <code>IPasswordHasher&lt;TUser&gt;</code> 介面，然後將其註冊到依賴注入容器中，替換掉預設的 <code>PasswordHasher</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h4><ol>
+<li>註冊</li>
+</ol>
+<figure class="highlight csharp"><figcaption><span>hl</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> hasher = <span class="keyword">new</span> PasswordHasher&lt;User&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> user = <span class="keyword">new</span> User </span><br><span class="line">&#123;</span><br><span class="line">    UserName = <span class="string">&quot;Jack&quot;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">string</span> hashedPassword = hasher.HashPassword(user, <span class="string">&quot;PlainPassword123!&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 存進資料庫</span></span><br><span class="line">user.PasswordHash = hashedPassword;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>登入</li>
+</ol>
+<figure class="highlight csharp"><figcaption><span>hl</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假設從資料庫取得使用者 </span></span><br><span class="line"><span class="keyword">var</span> user = <span class="keyword">await</span> _userRepository.GetByUsernameAsync(username); </span><br><span class="line"><span class="keyword">if</span> (user == <span class="literal">null</span>) <span class="keyword">return</span> Unauthorized();</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> hasher = <span class="keyword">new</span> PasswordHasher&lt;User&gt;();</span><br><span class="line"><span class="keyword">var</span> result = hasher.VerifyHashedPassword(user, user.PasswordHash, loginInputPassword);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (result == PasswordVerificationResult.Success ||</span><br><span class="line">    result == PasswordVerificationResult.SuccessRehashNeeded)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 密碼正確</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 密碼錯誤</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="學的時候的疑惑"><a href="#學的時候的疑惑" class="headerlink" title="學的時候的疑惑"></a>學的時候的疑惑</h4><ul>
+<li>為什麼鹽存在資料庫沒有安全問題？<ul>
+<li>因為就算攻擊者知道 Salt，只要 Salt 是<strong>每個密碼不同的隨機值</strong>，攻擊者無法一次破解很多帳號，也無法使用彩虹表</li>
+<li>Salt 的作用：<ul>
+<li>增加破解成本</li>
+<li>讓每個密碼的 Hash 都唯一</li>
+<li>讓攻擊者沒辦法用事先算好的表來對照</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>就算攻擊者知道 Hash（雜湊值）、Salt、使用的演算法（如 PBKDF2），也很難破解密碼，因為<ul>
+<li><strong>Hash 是不可逆的</strong>，能做的只有「暴力嘗試」，對所有可能密碼做：<code>Hash(猜的密碼 + 已知的鹽)</code>，然後比對結果，這對於強密碼來說計算成本極高。</li>
+<li>並且<strong>迭代</strong>（PBKDF2 演算法中重複執行雜湊計算的次數）也會增加計算成本</li>
+</ul>
+</li>
+</ul>
+<h2 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://medium.com/starbugs/what-are-encoding-encrypt-and-hashing-4b03d40e7b0c">一次搞懂密碼學中的三兄弟 — Encode、Encrypt 跟 Hash</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@brad61517/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8-%E5%AF%86%E7%A2%BC%E5%AD%98%E6%98%8E%E7%A2%BC-%E6%80%8E%E9%BA%BC%E4%B8%8D%E7%9B%B4%E6%8E%A5%E5%8E%BB%E8%A3%B8%E5%A5%94%E7%AE%97%E4%BA%86-%E6%B7%BA%E8%AB%87-hash-%E7%94%A8%E9%9B%9C%E6%B9%8A%E4%BF%9D%E8%AD%B7%E5%AF%86%E7%A2%BC-d561ad2a7d84">[資訊安全] 密碼存明碼，怎麼不直接去裸奔算了？淺談 Hash , 用雜湊保護密碼</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=6EEltKS8AwA&t=539s">JWT Authentication with .NET 9 🚀 Full Course with Roles, JSON Web Tokens &amp; Refresh Tokens</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@nambi2210/password-hashing-in-asp-net-core-ee377c29fa24">Password Hashing in ASP.NET Core</a></li>
+<li><a target="_blank" rel="noopener" href="https://code-maze.com/aspnetcore-default-asp-net-core-identity-password-hasher/">How Does the Default ASP.NET Core Identity Password Hasher Work?</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dotnet/aspnetcore/blob/704f7cb1d2cea33afb00c2097731216f121c2c73/src/Identity/Extensions.Core/src/PasswordHasher.cs">官方 Github</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ASP-NET-Core/" rel="tag"># ASP.NET Core</a>
+              <a href="/tags/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" rel="tag"># 資訊安全</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/10/20/first-post/" rel="prev" title="建立自己的部落格">
+                  <i class="fa fa-angle-left"></i> 建立自己的部落格
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
