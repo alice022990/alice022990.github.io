@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="記錄 SqlCommand.ExecuteReader() 沒有如預期拋出 SqlException 的問題，以及解決方案與原因分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException">
+<meta property="og:url" content="http://example.com/2025/11/19/pitfall-sqlcommand-executereader-exception/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="記錄 SqlCommand.ExecuteReader() 沒有如預期拋出 SqlException 的問題，以及解決方案與原因分析。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-11-18T16:17:53.000Z">
+<meta property="article:modified_time" content="2025-11-18T16:19:25.486Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ADO.NET">
+<meta property="article:tag" content="SqlCommand">
+<meta property="article:tag" content="踩坑記錄">
+<meta property="article:tag" content="Exception Handling">
+<meta property="article:tag" content="SQL Server">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/11/19/pitfall-sqlcommand-executereader-exception/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/11/19/pitfall-sqlcommand-executereader-exception/","path":"2025/11/19/pitfall-sqlcommand-executereader-exception/","title":"踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E8%AA%AA%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">背景說明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Stored-Procedure-%E5%85%A7%E5%AE%B9"><span class="nav-number">1.1.</span> <span class="nav-text">Stored Procedure 內容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-%E5%BE%8C%E7%AB%AF"><span class="nav-number">1.2.</span> <span class="nav-text">C# 後端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E5%BE%8C%E7%AB%AF%E6%B2%92%E6%9C%89%E6%8D%95%E6%8D%89%E5%88%B0%E9%8C%AF%E8%AA%A4%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">為什麼後端沒有捕捉到錯誤？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RAISERROR-%E7%9A%84%E8%A1%8C%E7%82%BA"><span class="nav-number">2.1.</span> <span class="nav-text">RAISERROR 的行為</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-ExecuteReader-%E7%9A%84%E8%A1%8C%E7%82%BA"><span class="nav-number">2.2.</span> <span class="nav-text">C# ExecuteReader() 的行為</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E6%B2%92%E6%9C%89%E6%8B%8B%E5%87%BA-SqlException%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">為什麼沒有拋出 SqlException？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%B5%90"><span class="nav-number">2.4.</span> <span class="nav-text">小結</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">解法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%B3%95%E4%B8%80%EF%BC%9A%E6%94%B9%E6%88%90%E4%BD%BF%E7%94%A8-ExecuteNonQuery"><span class="nav-number">3.1.</span> <span class="nav-text">解法一：改成使用 ExecuteNonQuery()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%B3%95%E4%BA%8C%EF%BC%9A%E4%BF%9D%E6%8C%81%E4%BD%BF%E7%94%A8-ExecuteReader%EF%BC%8C%E4%BD%86%E6%AA%A2%E6%9F%A5-NextResult"><span class="nav-number">3.2.</span> <span class="nav-text">解法二：保持使用 ExecuteReader，但檢查 NextResult</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">參考資料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/11/19/pitfall-sqlcommand-executereader-exception/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException | Hexo">
+      <meta itemprop="description" content="記錄 SqlCommand.ExecuteReader() 沒有如預期拋出 SqlException 的問題，以及解決方案與原因分析。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-11-19 00:17:53 / Modified: 00:19:25" itemprop="dateCreated datePublished" datetime="2025-11-19T00:17:53+08:00">2025-11-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/" itemprop="url" rel="index"><span itemprop="name">後端開發</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/%E8%B8%A9%E5%9D%91%E8%A8%98%E9%8C%84/" itemprop="url" rel="index"><span itemprop="name">踩坑記錄</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">記錄 SqlCommand.ExecuteReader() 沒有如預期拋出 SqlException 的問題，以及解決方案與原因分析。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>最近在測試 Stored Procedure 的錯誤處理時，發現一個奇怪的現象：<br>明明 SP 內部發生了錯誤並執行了 RAISERROR，但 C# 後端卻沒有捕捉到任何異常，甚至還記錄了「作業執行成功」的日誌。<br>查了一下才發現，問題出在 <code>ExecuteReader()</code> </p>
+<h2 id="背景說明"><a href="#背景說明" class="headerlink" title="背景說明"></a>背景說明</h2><p>下面重現我本來寫的 Stored Procedure 跟 C#後端</p>
+<h3 id="Stored-Procedure-內容"><a href="#Stored-Procedure-內容" class="headerlink" title="Stored Procedure 內容"></a>Stored Procedure 內容</h3><p>這是一個簡化版的 SP，使用了 TRY…CATCH 來包 transaction。在 TRY 區塊中，我故意放了一個 SELECT 1&#x2F;0 來觸發錯誤。因此在 CATCH 區塊中，會 Rollback 事務，並使用 RAISERROR 拋出錯誤訊息。</p>
+<ul>
+<li>錯誤沒有用 <code>throw</code>，是因為工作用的資料庫相容性等級太低，用不了</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> [dbo].[SP_demo]</span><br><span class="line"><span class="keyword">AS</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SET</span> NOCOUNT <span class="keyword">ON</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">DECLARE</span> <span class="variable">@DeletedRows</span> <span class="type">INT</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> <span class="variable">@InsertedRows</span> <span class="type">INT</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> <span class="variable">@ErrorMessage</span> NVARCHAR(<span class="number">4000</span>);</span><br><span class="line">    <span class="keyword">DECLARE</span> <span class="variable">@ErrorSeverity</span> <span class="type">INT</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> <span class="variable">@ErrorState</span> <span class="type">INT</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">-- 2. 使用事務處理確保資料一致性</span></span><br><span class="line">    <span class="keyword">BEGIN</span> TRY</span><br><span class="line">        <span class="keyword">BEGIN</span> TRANSACTION;</span><br><span class="line">        <span class="comment">--測試錯誤</span></span><br><span class="line">				<span class="keyword">SELECT</span> <span class="number">1</span><span class="operator">/</span><span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">-- ... 其他邏輯 ...</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">SET</span> <span class="variable">@DeletedRows</span> <span class="operator">=</span> @<span class="variable">@ROWCOUNT</span>;</span><br><span class="line">        <span class="comment">-- ... </span></span><br><span class="line">        <span class="keyword">SET</span> <span class="variable">@InsertedRows</span> <span class="operator">=</span> @<span class="variable">@ROWCOUNT</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">-- 提交事務</span></span><br><span class="line">        <span class="keyword">COMMIT</span> TRANSACTION;</span><br><span class="line">		<span class="keyword">SELECT</span> <span class="variable">@DeletedRows</span> <span class="keyword">AS</span> DeletedRows, <span class="variable">@InsertedRows</span> <span class="keyword">AS</span> InsertedRows;</span><br><span class="line">    <span class="keyword">END</span> TRY</span><br><span class="line">    <span class="keyword">BEGIN</span> CATCH</span><br><span class="line">        <span class="comment">-- 如果發生錯誤,回滾事務</span></span><br><span class="line">        IF @<span class="variable">@TRANCOUNT</span> <span class="operator">&gt;</span> <span class="number">0</span></span><br><span class="line">            <span class="keyword">ROLLBACK</span> TRANSACTION;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">-- 取得錯誤訊息</span></span><br><span class="line">        <span class="keyword">SELECT</span> </span><br><span class="line">            <span class="variable">@ErrorMessage</span> <span class="operator">=</span> ERROR_MESSAGE(),</span><br><span class="line">            <span class="variable">@ErrorSeverity</span> <span class="operator">=</span> ERROR_SEVERITY(),</span><br><span class="line">            <span class="variable">@ErrorState</span> <span class="operator">=</span> ERROR_STATE();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">-- 拋出錯誤</span></span><br><span class="line">        RAISERROR(<span class="variable">@ErrorMessage</span>, <span class="variable">@ErrorSeverity</span>, <span class="variable">@ErrorState</span>);</span><br><span class="line">    <span class="keyword">END</span> CATCH</span><br><span class="line"><span class="keyword">END</span></span><br><span class="line">GO</span><br></pre></td></tr></table></figure>
+
+<h3 id="C-後端"><a href="#C-後端" class="headerlink" title="C# 後端"></a>C# 後端</h3><p>這是一個簡單的主控台應用程式，使用了 <code>cmd.ExecuteReader()</code> 來執行 SP，並期望 SqlException 會在 <code>catch (SqlException sqlEx)</code> 區塊被捕捉，記錄到 Error Log 中。<br>但執行完的結果只有出現 Info Log，甚至記錄到了 「&#x3D;&#x3D;&#x3D; 作業執行成功 &#x3D;&#x3D;&#x3D;」，<code>try-catch</code> 區塊完全沒有捕捉到任何 SqlException。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> System.Configuration;</span><br><span class="line"><span class="keyword">using</span> System.Data;</span><br><span class="line"><span class="keyword">using</span> System.Data.SqlClient;</span><br><span class="line"><span class="keyword">using</span> System.Linq;</span><br><span class="line"><span class="keyword">using</span> System.Text;</span><br><span class="line"><span class="keyword">using</span> System.Threading.Tasks;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Demo</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] <span class="keyword">args</span></span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">try</span></span><br><span class="line">            &#123;</span><br><span class="line">                logger.Info(<span class="string">&quot;=== 開始執行每日資料更新作業 ===&quot;</span>);</span><br><span class="line">                <span class="built_in">string</span> connectionString = ConfigurationManager.ConnectionStrings[<span class="string">&quot;Conn&quot;</span>].ConnectionString;</span><br><span class="line">                <span class="keyword">using</span> (SqlConnection conn = <span class="keyword">new</span> SqlConnection(connectionString))</span><br><span class="line">                &#123;</span><br><span class="line">                    conn.Open();</span><br><span class="line">                    logger.Info(<span class="string">&quot;資料庫連線成功&quot;</span>);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">using</span> (SqlCommand cmd = <span class="keyword">new</span> SqlCommand(<span class="string">&quot;[dbo].[SP_demo]&quot;</span>, conn))</span><br><span class="line">                    &#123;</span><br><span class="line">                        cmd.CommandType = CommandType.StoredProcedure;</span><br><span class="line">                        cmd.CommandTimeout = <span class="number">600</span>; <span class="comment">// 10分鐘超時</span></span><br><span class="line">                    </span><br><span class="line">                        <span class="comment">// 執行 SP 並取得結果</span></span><br><span class="line">                        <span class="keyword">using</span> (SqlDataReader reader = cmd.ExecuteReader())</span><br><span class="line">                        &#123;</span><br><span class="line">                            <span class="keyword">if</span> (reader.Read())</span><br><span class="line">                            &#123;</span><br><span class="line">                                <span class="built_in">int</span> deletedRows = reader.GetInt32(<span class="number">0</span>);</span><br><span class="line">                                <span class="built_in">int</span> insertedRows = reader.GetInt32(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">                                logger.Info(<span class="built_in">string</span>.Format(<span class="string">&quot;刪除記錄數: &#123;0&#125;、新增記錄數: &#123;1&#125;&quot;</span>, deletedRows, insertedRows));</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            </span><br><span class="line">                logger.Info(<span class="string">&quot;=== 作業執行成功 ===&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (SqlException sqlEx)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// SQL 相關錯誤</span></span><br><span class="line">                logger.Error(sqlEx, <span class="built_in">string</span>.Format(<span class="string">&quot;SQL錯誤 - ErrorNumber: &#123;0&#125;, Message: &#123;1&#125;&quot;</span>, sqlEx.Number, sqlEx.Message));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception ex)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 其他錯誤</span></span><br><span class="line">                logger.Error(<span class="built_in">string</span>.Format(<span class="string">@&quot;ExecutedError : &#123;0&#125;&quot;</span>, ex.ToString()));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="為什麼後端沒有捕捉到錯誤？"><a href="#為什麼後端沒有捕捉到錯誤？" class="headerlink" title="為什麼後端沒有捕捉到錯誤？"></a>為什麼後端沒有捕捉到錯誤？</h2><h3 id="RAISERROR-的行為"><a href="#RAISERROR-的行為" class="headerlink" title="RAISERROR 的行為"></a>RAISERROR 的行為</h3><p>當 SP 執行到 <code>RAISERROR</code> 時，SQL Server：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RAISERROR(<span class="variable">@ErrorMessage</span>, <span class="variable">@ErrorSeverity</span>, <span class="variable">@ErrorState</span>);</span><br><span class="line"><span class="operator">*</span><span class="comment">-- 實際上是：RAISERROR(&#x27;Divide by zero error encountered.&#x27;, 16, 1);*</span></span><br></pre></td></tr></table></figure>
+
+<p>關鍵：<strong>RAISERROR 的嚴重性級別，會影響錯誤是否會中斷連線</strong></p>
+<ul>
+<li>觸發的錯誤是<code>@ErrorSeverity = 16</code>（一般錯誤）</li>
+<li>這個級別的錯誤<strong>不會立即中斷 SQL 批次</strong></li>
+<li>SP 會<strong>正常完成執行</strong>，只是返回一個錯誤訊息</li>
+</ul>
+<h3 id="C-ExecuteReader-的行為"><a href="#C-ExecuteReader-的行為" class="headerlink" title="C# ExecuteReader() 的行為"></a>C# ExecuteReader() 的行為</h3><p><code>ExecuteReader()</code> 實際上完成了以下步驟：</p>
+<ol>
+<li><p>發送命令到 SQL Server </p>
+</li>
+<li><p>SQL Server 執行 SP </p>
+</li>
+<li><p>SP 內部：</p>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span> TRY</span><br><span class="line">    <span class="keyword">BEGIN</span> TRANSACTION;</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="number">1</span><span class="operator">/</span><span class="number">0</span>;  <span class="comment">-- 錯誤發生</span></span><br><span class="line">    <span class="comment">-- 下面都不會執行</span></span><br><span class="line"><span class="keyword">END</span> TRY</span><br><span class="line"><span class="keyword">BEGIN</span> CATCH</span><br><span class="line">    <span class="keyword">ROLLBACK</span> TRANSACTION;</span><br><span class="line">    RAISERROR(<span class="variable">@ErrorMessage</span>, <span class="variable">@ErrorSeverity</span>, <span class="variable">@ErrorState</span>);</span><br><span class="line">    <span class="comment">-- ← SP 在這裡結束</span></span><br><span class="line"><span class="keyword">END</span> CATCH</span><br></pre></td></tr></table></figure>
+<ul>
+<li>執行 <code>SELECT 1/0</code> → 錯誤</li>
+<li>進入 <code>CATCH</code> 區塊</li>
+<li>執行 <code>ROLLBACK</code></li>
+<li>執行 <code>RAISERROR</code> → 產生錯誤訊息</li>
+<li>SP 執行完畢（沒有崩潰）</li>
+</ul>
+</li>
+<li><p>SQL Server 返回結果給 C#：</p>
+<ul>
+<li><strong>空的結果集</strong>（因為 <code>SELECT @DeletedRows...</code> 沒成功執行）</li>
+<li>有<strong>一個錯誤訊息</strong>（來自 RAISERROR）</li>
+</ul>
+</li>
+<li><p>C# 的 <code>SqlDataReader</code>：</p>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> (SqlDataReader reader <span class="operator">=</span> cmd.ExecuteReader())</span><br><span class="line">&#123;</span><br><span class="line">    if (reader.Read())  <span class="operator">/</span><span class="operator">/</span> 返回 <span class="literal">false</span>（沒有結果集可讀）</span><br><span class="line">    <span class="operator">/</span><span class="operator">/</span> 不會進入 if 區塊</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> deletedRows <span class="operator">=</span> reader.GetInt32(<span class="number">0</span>);</span><br><span class="line">        <span class="type">int</span> insertedRows <span class="operator">=</span> reader.GetInt32(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        logger.Info(string.Format(&quot;刪除記錄數: &#123;0&#125;、新增記錄數: &#123;1&#125;&quot;, deletedRows, insertedRows));</span><br><span class="line">	  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span> reader 正常關閉</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span> ← 沒有拋出異常！</span><br></pre></td></tr></table></figure>
+<p> 執行流程：</p>
+<ol>
+<li><code>ExecuteReader()</code> 打開結果流</li>
+<li><code>reader.Read()</code> 嘗試讀取第一行 → 返回 <code>false</code>（沒有資料）</li>
+<li>不進入 if 區塊</li>
+<li><code>reader</code> 被 dispose，結果流被提前關閉</li>
+<li><strong>錯誤訊息還在流中，但沒被讀取！</strong></li>
+</ol>
+</li>
+</ol>
+<h3 id="為什麼沒有拋出-SqlException？"><a href="#為什麼沒有拋出-SqlException？" class="headerlink" title="為什麼沒有拋出 SqlException？"></a>為什麼沒有拋出 SqlException？</h3><p><code>ExecuteReader()</code> 只有在以下情況才會拋出異常：</p>
+<ol>
+<li><p>嚴重錯誤（Severity &gt;&#x3D; 20）</p>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RAISERROR(<span class="string">&#x27;Critical error&#x27;</span>, <span class="number">20</span>, <span class="number">1</span>) <span class="keyword">WITH</span> LOG;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>連線層級的錯誤：例如：語法錯誤、權限錯誤、連線中斷</p>
+</li>
+<li><p>SQL 錯誤發生在 TRY…CATCH 之外：錯誤沒有被捕捉，會直接拋給 C#</p>
+</li>
+</ol>
+<h3 id="小結"><a href="#小結" class="headerlink" title="小結"></a>小結</h3><p>程式沒有捕捉到錯誤是因為：</p>
+<ol>
+<li>錯誤被 SP 內部的 <code>TRY...CATCH</code> 捕捉了</li>
+<li><code>RAISERROR(Severity=16)</code> 不會中斷 SP 執行</li>
+<li>SP 正常完成，只是沒有返回資料</li>
+<li><code>ExecuteReader()</code> 看到「沒有結果集」，不會拋出異常</li>
+<li>本來的程式只檢查了 <code>reader.Read()</code>，返回 false 就結束了</li>
+</ol>
+<h2 id="解法"><a href="#解法" class="headerlink" title="解法"></a>解法</h2><h3 id="解法一：改成使用-ExecuteNonQuery"><a href="#解法一：改成使用-ExecuteNonQuery" class="headerlink" title="解法一：改成使用 ExecuteNonQuery()"></a>解法一：改成使用 <code>ExecuteNonQuery()</code></h3><p>使用 <code>ExecuteNonQuery()</code> 並透過 Output 參數 或 Return Value 來取得結果：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> (SqlCommand cmd = <span class="keyword">new</span> SqlCommand(<span class="string">&quot;[dbo].[SP_demo]&quot;</span>, conn))</span><br><span class="line">&#123;</span><br><span class="line">    cmd.CommandType = CommandType.StoredProcedure;</span><br><span class="line">    cmd.CommandTimeout = <span class="number">600</span>; <span class="comment">// 10分鐘超時</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 加入輸出參數</span></span><br><span class="line">    SqlParameter deletedParam = <span class="keyword">new</span> SqlParameter(<span class="string">&quot;@DeletedRows&quot;</span>, SqlDbType.Int)</span><br><span class="line">    &#123;</span><br><span class="line">        Direction = ParameterDirection.Output</span><br><span class="line">    &#125;;</span><br><span class="line">    SqlParameter insertedParam = <span class="keyword">new</span> SqlParameter(<span class="string">&quot;@InsertedRows&quot;</span>, SqlDbType.Int)</span><br><span class="line">    &#123;</span><br><span class="line">        Direction = ParameterDirection.Output</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    cmd.Parameters.Add(deletedParam);</span><br><span class="line">    cmd.Parameters.Add(insertedParam);</span><br><span class="line"></span><br><span class="line">    cmd.ExecuteNonQuery();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">int</span> deletedRows = (<span class="built_in">int</span>)deletedParam.Value;</span><br><span class="line">    <span class="built_in">int</span> insertedRows = (<span class="built_in">int</span>)insertedParam.Value;</span><br><span class="line"></span><br><span class="line">    logger.Info(<span class="built_in">string</span>.Format(<span class="string">&quot;刪除記錄數: &#123;0&#125;、新增記錄數: &#123;1&#125;&quot;</span>, deletedRows, insertedRows));</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>相對應修改 Stored Procedure</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">PROCEDURE</span> [dbo].[SP_demo]</span><br><span class="line">    <span class="variable">@DeletedRows</span> <span class="type">INT</span> OUTPUT,</span><br><span class="line">    <span class="variable">@InsertedRows</span> <span class="type">INT</span> OUTPUT</span><br><span class="line"><span class="keyword">AS</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SET</span> NOCOUNT <span class="keyword">ON</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">-- 初始化輸出參數</span></span><br><span class="line">    <span class="keyword">SET</span> <span class="variable">@DeletedRows</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">SET</span> <span class="variable">@InsertedRows</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">-- ... 其他宣告 ...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">BEGIN</span> TRY</span><br><span class="line">        <span class="keyword">BEGIN</span> TRANSACTION;</span><br><span class="line">        <span class="keyword">SELECT</span> <span class="number">1</span><span class="operator">/</span><span class="number">0</span>;  <span class="comment">-- 測試錯誤</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">-- ... 其他邏輯 ...</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">SET</span> <span class="variable">@DeletedRows</span> <span class="operator">=</span> @<span class="variable">@ROWCOUNT</span>;</span><br><span class="line">        <span class="comment">-- ... </span></span><br><span class="line">        <span class="keyword">SET</span> <span class="variable">@InsertedRows</span> <span class="operator">=</span> @<span class="variable">@ROWCOUNT</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">COMMIT</span> TRANSACTION;</span><br><span class="line">    <span class="keyword">END</span> TRY</span><br><span class="line">    <span class="keyword">BEGIN</span> CATCH</span><br><span class="line">        IF @<span class="variable">@TRANCOUNT</span> <span class="operator">&gt;</span> <span class="number">0</span></span><br><span class="line">            <span class="keyword">ROLLBACK</span> TRANSACTION;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">DECLARE</span> <span class="variable">@ErrorMessage</span> NVARCHAR(<span class="number">4000</span>) <span class="operator">=</span> ERROR_MESSAGE();</span><br><span class="line">        <span class="keyword">DECLARE</span> <span class="variable">@ErrorSeverity</span> <span class="type">INT</span> <span class="operator">=</span> ERROR_SEVERITY();</span><br><span class="line">        <span class="keyword">DECLARE</span> <span class="variable">@ErrorState</span> <span class="type">INT</span> <span class="operator">=</span> ERROR_STATE();</span><br><span class="line">        </span><br><span class="line">        RAISERROR(<span class="variable">@ErrorMessage</span>, <span class="variable">@ErrorSeverity</span>, <span class="variable">@ErrorState</span>);</span><br><span class="line">    <span class="keyword">END</span> CATCH</span><br><span class="line"><span class="keyword">END</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="解法二：保持使用-ExecuteReader，但檢查-NextResult"><a href="#解法二：保持使用-ExecuteReader，但檢查-NextResult" class="headerlink" title="解法二：保持使用 ExecuteReader，但檢查 NextResult"></a>解法二：保持使用 <code>ExecuteReader</code>，但檢查 <code>NextResult</code></h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> (SqlCommand cmd = <span class="keyword">new</span> SqlCommand(<span class="string">&quot;[dbo].[SP_demo]&quot;</span>, conn))</span><br><span class="line">&#123;</span><br><span class="line">    cmd.CommandType = CommandType.StoredProcedure;</span><br><span class="line">    cmd.CommandTimeout = <span class="number">600</span>; </span><br><span class="line"></span><br><span class="line">    **<span class="keyword">using</span> (SqlDataReader reader = cmd.ExecuteReader())</span><br><span class="line">    &#123;</span><br><span class="line">		    <span class="comment">// 嘗試讀取所有結果集</span></span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (reader.Read())</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">int</span> deletedRows = reader.GetInt32(<span class="number">0</span>);</span><br><span class="line">                <span class="built_in">int</span> insertedRows = reader.GetInt32(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">                logger.Info(<span class="built_in">string</span>.Format(<span class="string">&quot;刪除記錄數: &#123;0&#125;、新增記錄數: &#123;1&#125;&quot;</span>, deletedRows, insertedRows));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">while</span> (reader.NextResult());  <span class="comment">// 重要：檢查是否有下一個結果集</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因為 SQL Server 會透過 TDS（Tabular Data Stream）協定以串流方式將結果傳回給用戶端，而 結果集的資料列 會<strong>先於</strong> 例外訊息。</p>
+<p>因此，<strong>用戶端 API 必須先把前面的資料全部讀取完</strong>，才能看到並拋出該錯誤。</p>
+<p>利用 <code>NextResult()</code> 迴圈可以確保 <strong>TDS 解析器已經完整讀取整個結果集</strong>。</p>
+<h2 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/45010861/sqldatareader-fails-to-throw-exception">https://stackoverflow.com/questions/45010861/sqldatareader-fails-to-throw-exception</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/48807204/executereaderasync-does-not-throw-exception-when-result-set-and-exception-both-r?rq=3">https://stackoverflow.com/questions/48807204/executereaderasync-does-not-throw-exception-when-result-set-and-exception-both-r?rq=3</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/68712716/sqldatareader-and-t-sql-no-exception-propagated-when-using-try-catch-with">https://stackoverflow.com/questions/68712716/sqldatareader-and-t-sql-no-exception-propagated-when-using-try-catch-with</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.dbdelta.com/the-curious-case-of-undetected-sql-exceptions/">https://www.dbdelta.com/the-curious-case-of-undetected-sql-exceptions/</a></li>
+<li><a target="_blank" rel="noopener" href="https://post.bytes.com/forum/topic/c-sharp/798496-executereader-not-throwing-exception-from-t-sql-when-using-try-catch-in-stored-proc">https://post.bytes.com/forum/topic/c-sharp/798496-executereader-not-throwing-exception-from-t-sql-when-using-try-catch-in-stored-proc</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ADO-NET/" rel="tag"># ADO.NET</a>
+              <a href="/tags/SqlCommand/" rel="tag"># SqlCommand</a>
+              <a href="/tags/%E8%B8%A9%E5%9D%91%E8%A8%98%E9%8C%84/" rel="tag"># 踩坑記錄</a>
+              <a href="/tags/Exception-Handling/" rel="tag"># Exception Handling</a>
+              <a href="/tags/SQL-Server/" rel="tag"># SQL Server</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/11/15/password-security-aspnetcore/" rel="prev" title="搞懂加密、雜湊、加鹽與 ASP.NET Core 密碼加密">
+                  <i class="fa fa-angle-left"></i> 搞懂加密、雜湊、加鹽與 ASP.NET Core 密碼加密
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
