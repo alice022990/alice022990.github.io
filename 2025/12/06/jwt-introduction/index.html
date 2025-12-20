@@ -19,22 +19,32 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/index.html">
+    <meta name="description" content="JWT 介紹JWT 是什麼？JWT (JSON Web Token) 是一種基於 JSON 的開放標準（RFC 7519），用於在各方之間將訊息作為 JSON 物件安全地傳輸。常用於身份驗證和信息交換。 JWT 的結構JWT 由三個部分組成，用點（.）分隔： 1header.payload.signature 實際看起來像這樣：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JWT (JSON Web Token) 入門筆記">
+<meta property="og:url" content="http://example.com/2025/12/06/jwt-introduction/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="JWT 介紹JWT 是什麼？JWT (JSON Web Token) 是一種基於 JSON 的開放標準（RFC 7519），用於在各方之間將訊息作為 JSON 物件安全地傳輸。常用於身份驗證和信息交換。 JWT 的結構JWT 由三個部分組成，用點（.）分隔： 1header.payload.signature 實際看起來像這樣：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-06T10:10:26.000Z">
+<meta property="article:modified_time" content="2025-12-20T10:13:33.651Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="JWT">
+<meta property="article:tag" content="身份驗證">
+<meta property="article:tag" content="Web Security">
+<meta property="article:tag" content="Authentication">
+<meta property="article:tag" content="Authorization">
+<meta property="article:tag" content="API">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2025/12/06/jwt-introduction/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"en","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/12/06/jwt-introduction/","path":"2025/12/06/jwt-introduction/","title":"JWT (JSON Web Token) 入門筆記"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Hexo</title>
+<title>JWT (JSON Web Token) 入門筆記 | Hexo</title>
   
 
 
@@ -64,7 +74,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Hexo</h1>
+      <p class="site-title">Hexo</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -86,7 +96,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -99,6 +109,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JWT-%E4%BB%8B%E7%B4%B9"><span class="nav-number">1.</span> <span class="nav-text">JWT 介紹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT-%E6%98%AF%E4%BB%80%E9%BA%BC%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">JWT 是什麼？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT-%E7%9A%84%E7%B5%90%E6%A7%8B"><span class="nav-number">1.2.</span> <span class="nav-text">JWT 的結構</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Header%EF%BC%88%E6%A8%99%E9%A0%AD%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. Header（標頭）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Payload"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. Payload</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Signature%EF%BC%88%E7%B0%BD%E5%90%8D%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. Signature（簽名）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT-%E7%9A%84%E9%81%8B%E4%BD%9C%E6%B5%81%E7%A8%8B%EF%BC%88%E4%BB%A5%E6%8E%88%E6%AC%8A%E7%82%BA%E4%BE%8B%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">JWT 的運作流程（以授權為例）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT-%E7%9A%84%E5%84%AA%E7%BC%BA%E9%BB%9E"><span class="nav-number">1.4.</span> <span class="nav-text">JWT 的優缺點</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -136,16 +147,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2025/12/06/jwt-introduction/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -159,13 +171,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="name" content="JWT (JSON Web Token) 入門筆記 | Hexo">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/12/06/jwt-introduction/" class="post-title-link" itemprop="url">JWT (JSON Web Token) 入門筆記</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          JWT (JSON Web Token) 入門筆記
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -207,8 +219,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="JWT-介紹"><a href="#JWT-介紹" class="headerlink" title="JWT 介紹"></a>JWT 介紹</h2><h3 id="JWT-是什麼？"><a href="#JWT-是什麼？" class="headerlink" title="JWT 是什麼？"></a>JWT 是什麼？</h3><p>JWT (JSON Web Token) 是一種基於 JSON 的開放標準（RFC 7519），用於在各方之間<strong>將訊息作為 JSON 物件</strong>安全地傳輸。常用於身份驗證和信息交換。</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="JWT-介紹"><a href="#JWT-介紹" class="headerlink" title="JWT 介紹"></a>JWT 介紹</h2><h3 id="JWT-是什麼？"><a href="#JWT-是什麼？" class="headerlink" title="JWT 是什麼？"></a>JWT 是什麼？</h3><p>JWT (JSON Web Token) 是一種基於 JSON 的開放標準（RFC 7519），用於在各方之間<strong>將訊息作為 JSON 物件</strong>安全地傳輸。常用於身份驗證和信息交換。</p>
 <h3 id="JWT-的結構"><a href="#JWT-的結構" class="headerlink" title="JWT 的結構"></a>JWT 的結構</h3><p>JWT 由三個部分組成，用點（.）分隔：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">header.payload.signature</span><br></pre></td></tr></table></figure>
 <p>實際看起來像這樣：<code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</code></p>
@@ -266,7 +277,6 @@
 <li>密鑰洩露風險：如果密鑰被盜，所有 Token 都不安全</li>
 </ul>
 
-      
     </div>
 
     
@@ -274,286 +284,30 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
+          <div class="post-tags">
+              <a href="/tags/JWT/" rel="tag"># JWT</a>
+              <a href="/tags/%E8%BA%AB%E4%BB%BD%E9%A9%97%E8%AD%89/" rel="tag"># 身份驗證</a>
+              <a href="/tags/Web-Security/" rel="tag"># Web Security</a>
+              <a href="/tags/Authentication/" rel="tag"># Authentication</a>
+              <a href="/tags/Authorization/" rel="tag"># Authorization</a>
+              <a href="/tags/API/" rel="tag"># API</a>
+          </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/11/19/pitfall-sqlcommand-executereader-exception/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/11/19/pitfall-sqlcommand-executereader-exception/" class="post-title-link" itemprop="url">踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2025-11-19 00:17:53 / Modified: 00:24:06" itemprop="dateCreated datePublished" datetime="2025-11-19T00:17:53+08:00">2025-11-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/" itemprop="url" rel="index"><span itemprop="name">後端開發</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/%E8%B8%A9%E5%9D%91%E8%A8%98%E9%8C%84/" itemprop="url" rel="index"><span itemprop="name">踩坑記錄</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>記錄 SqlCommand.ExecuteReader() 沒有如預期拋出 SqlException 的問題，以及解決方案與原因分析。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/11/19/pitfall-sqlcommand-executereader-exception/">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/11/15/password-security-aspnetcore/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/11/15/password-security-aspnetcore/" class="post-title-link" itemprop="url">搞懂加密、雜湊、加鹽與 ASP.NET Core 密碼加密</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2025-11-15 17:07:41" itemprop="dateCreated datePublished" datetime="2025-11-15T17:07:41+08:00">2025-11-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-12-20 17:45:29" itemprop="dateModified" datetime="2025-12-20T17:45:29+08:00">2025-12-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/" itemprop="url" rel="index"><span itemprop="name">後端開發</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">資訊安全</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>深入解析密碼儲存的安全機制，包含 Hash、Salt、Encoding、Encryption 的差異，以及 ASP.NET Core PasswordHasher 的實作原理與使用方式。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/11/15/password-security-aspnetcore/">
-                Read more &raquo;
-              </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/11/19/pitfall-sqlcommand-executereader-exception/" rel="prev" title="踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException">
+                  <i class="fa fa-angle-left"></i> 踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException
+                </a>
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/10/20/first-post/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/10/20/first-post/" class="post-title-link" itemprop="url">建立自己的部落格</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2025-10-20 22:38:46" itemprop="dateCreated datePublished" datetime="2025-10-20T22:38:46+08:00">2025-10-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-12-20 17:48:59" itemprop="dateModified" datetime="2025-12-20T17:48:59+08:00">2025-12-20</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="使用技術"><a href="#使用技術" class="headerlink" title="使用技術"></a>使用技術</h2><ul>
-<li>Hexo + Next() + github page</li>
-</ul>
-<h2 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h2><h4 id="新增文章"><a href="#新增文章" class="headerlink" title="新增文章"></a>新增文章</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo new [layout] &lt;title&gt;</span><br><span class="line">hexo new <span class="string">&quot;My New Post&quot;</span> <span class="comment">#範例</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>[layout]</code>：默認是<code>post</code>，可以改成<code>draft</code>等其他的模版</li>
-<li><code>&lt;title&gt;</code>：文章標題</li>
-</ul>
-<h4 id="建置-部署到-github-page"><a href="#建置-部署到-github-page" class="headerlink" title="建置 + 部署到 github page"></a>建置 + 部署到 github page</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hexo c  <span class="comment">#clean 清除靜態檔案</span></span><br><span class="line">hexo g  <span class="comment">#generate 生成靜態檔案</span></span><br><span class="line"></span><br><span class="line">hexo s  <span class="comment">#server 本地伺服器</span></span><br><span class="line">hexo d  <span class="comment">#deploy 部署到 github page</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="參考文章"><a href="#參考文章" class="headerlink" title="參考文章"></a>參考文章</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://moon-jam.me/Hexo-NexT_Github-Page_build-blog/">https://moon-jam.me/Hexo-NexT_Github-Page_build-blog/</a></li>
-<li><a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/articles/10360656">https://ithelp.ithome.com.tw/articles/10360656</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
 
 
