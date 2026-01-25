@@ -28,7 +28,7 @@
 <meta property="og:description" content="JWT 介紹JWT 是什麼？JWT (JSON Web Token) 是一種基於 JSON 的開放標準（RFC 7519），用於在各方之間將訊息作為 JSON 物件安全地傳輸。常用於身份驗證和信息交換。 JWT 的結構JWT 由三個部分組成，用點（.）分隔： 1header.payload.signature 實際看起來像這樣：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-12-06T10:10:26.000Z">
-<meta property="article:modified_time" content="2025-12-20T10:16:47.551Z">
+<meta property="article:modified_time" content="2026-01-25T09:16:53.932Z">
 <meta property="article:author" content="Alice Chiang">
 <meta property="article:tag" content="JWT">
 <meta property="article:tag" content="身份驗證">
@@ -191,7 +191,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-12-20 18:16:47" itemprop="dateModified" datetime="2025-12-20T18:16:47+08:00">2025-12-20</time>
+                <time title="Modified: 2026-01-25 17:16:53" itemprop="dateModified" datetime="2026-01-25T17:16:53+08:00">2026-01-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -221,7 +221,7 @@
         <h2 id="JWT-介紹"><a href="#JWT-介紹" class="headerlink" title="JWT 介紹"></a>JWT 介紹</h2><h3 id="JWT-是什麼？"><a href="#JWT-是什麼？" class="headerlink" title="JWT 是什麼？"></a>JWT 是什麼？</h3><p>JWT (JSON Web Token) 是一種基於 JSON 的開放標準（RFC 7519），用於在各方之間<strong>將訊息作為 JSON 物件</strong>安全地傳輸。常用於身份驗證和信息交換。</p>
 <h3 id="JWT-的結構"><a href="#JWT-的結構" class="headerlink" title="JWT 的結構"></a>JWT 的結構</h3><p>JWT 由三個部分組成，用點（.）分隔：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">header.payload.signature</span><br></pre></td></tr></table></figure>
-<p>實際看起來像這樣：<code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</code></p>
+<p>實際看起來像這樣：<br><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</code></p>
 <h4 id="1-Header（標頭）"><a href="#1-Header（標頭）" class="headerlink" title="1. Header（標頭）"></a>1. Header（標頭）</h4><p>標頭通常包含兩部分：</p>
 <ul>
 <li><strong><code>typ</code></strong>: Token 的類型，通常是 <code>JWT</code>。</li>
@@ -232,7 +232,7 @@
 <ul>
 <li><strong>註冊宣告 (Registered Claims)：</strong> 是 JWT 標準（RFC 7519）中預定義的聲明，建議使用，但非強制性。例如：<ul>
 <li><code>iss</code> (Issuer)：發行者，標識是誰創建了這個 Token</li>
-<li><code>iat</code>(Issued At Time)：發行時間</li>
+<li><code>iat</code> (Issued At Time)：發行時間</li>
 <li><code>exp</code> (Expiration Time)：過期時間</li>
 <li><code>sub</code> (Subject)：JWT 的使用者（通常放用戶 ID）</li>
 <li><code>aud</code> (Audience)：接收此 JWT 的收件人</li>
