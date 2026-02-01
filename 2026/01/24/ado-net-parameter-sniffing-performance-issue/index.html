@@ -20,28 +20,38 @@
     var CONFIG = {"hostname":"alice022990.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Dev Blog">
-<meta property="og:url" content="https://alice022990.github.io/index.html">
+  <meta name="description" content="在做顯示特定大量資料的時候遇到顯示非常慢的問題，後來發現是 Ado.net 查詢很慢的關係，同樣的 sql script SSMS 執行不到 1 秒，但 Ado.net 卻需要近 1 分鐘，查了一些資料，一個一個試，最後發現是遇到參數嗅探。試過  WITH (NOLOCK)  有變快一點點，但還是沒有達到理想中的速度   明確指定 SQL 型別 資料庫的欄位型別跟 Ado.net 預設參數型別本來">
+<meta property="og:type" content="article">
+<meta property="og:title" content="踩坑記錄：ADO.NET 查詢慢但 SSMS 很快">
+<meta property="og:url" content="https://alice022990.github.io/2026/01/24/ado-net-parameter-sniffing-performance-issue/index.html">
 <meta property="og:site_name" content="Dev Blog">
+<meta property="og:description" content="在做顯示特定大量資料的時候遇到顯示非常慢的問題，後來發現是 Ado.net 查詢很慢的關係，同樣的 sql script SSMS 執行不到 1 秒，但 Ado.net 卻需要近 1 分鐘，查了一些資料，一個一個試，最後發現是遇到參數嗅探。試過  WITH (NOLOCK)  有變快一點點，但還是沒有達到理想中的速度   明確指定 SQL 型別 資料庫的欄位型別跟 Ado.net 預設參數型別本來">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-01-24T08:32:35.000Z">
+<meta property="article:modified_time" content="2026-02-01T08:36:07.209Z">
 <meta property="article:author" content="Alice Chiang">
+<meta property="article:tag" content="踩坑記錄">
+<meta property="article:tag" content="ADO.NET">
+<meta property="article:tag" content="Parameter Sniffing">
+<meta property="article:tag" content="效能優化">
+<meta property="article:tag" content="參數嗅探">
+<meta property="article:tag" content="執行計畫">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://alice022990.github.io/">
+<link rel="canonical" href="https://alice022990.github.io/2026/01/24/ado-net-parameter-sniffing-performance-issue/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>Dev Blog</title>
+  <title>踩坑記錄：ADO.NET 查詢慢但 SSMS 很快 | Dev Blog</title>
   
 
 
@@ -145,9 +155,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
@@ -163,10 +174,9 @@
       <meta itemprop="name" content="Dev Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/01/24/ado-net-parameter-sniffing-performance-issue/" class="post-title-link" itemprop="url">踩坑記錄：ADO.NET 查詢慢但 SSMS 很快</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          踩坑記錄：ADO.NET 查詢慢但 SSMS 很快
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -213,7 +223,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>在做顯示特定大量資料的時候遇到顯示非常慢的問題，後來發現是 Ado.net 查詢很慢的關係，同樣的 sql script SSMS 執行不到 1 秒，但 Ado.net 卻需要近 1 分鐘，查了一些資料，一個一個試，最後發現是遇到<strong>參數嗅探</strong>。<br>試過</p>
+        <p>在做顯示特定大量資料的時候遇到顯示非常慢的問題，後來發現是 Ado.net 查詢很慢的關係，同樣的 sql script SSMS 執行不到 1 秒，但 Ado.net 卻需要近 1 分鐘，查了一些資料，一個一個試，最後發現是遇到<strong>參數嗅探</strong>。<br>試過</p>
 <ol>
 <li><code>WITH (NOLOCK)</code> <ul>
 <li>有變快一點點，但還是沒有達到理想中的速度</li>
@@ -330,406 +340,38 @@
 <li><a target="_blank" rel="noopener" href="https://sqlperformance.com/2013/08/t-sql-queries/parameter-sniffing-embedding-and-the-recompile-options">https://sqlperformance.com/2013/08/t-sql-queries/parameter-sniffing-embedding-and-the-recompile-options</a></li>
 </ul>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/%E8%B8%A9%E5%9D%91%E8%A8%98%E9%8C%84/" rel="tag"># 踩坑記錄</a>
+              <a href="/tags/ADO-NET/" rel="tag"># ADO.NET</a>
+              <a href="/tags/Parameter-Sniffing/" rel="tag"># Parameter Sniffing</a>
+              <a href="/tags/%E6%95%88%E8%83%BD%E5%84%AA%E5%8C%96/" rel="tag"># 效能優化</a>
+              <a href="/tags/%E5%8F%83%E6%95%B8%E5%97%85%E6%8E%A2/" rel="tag"># 參數嗅探</a>
+              <a href="/tags/%E5%9F%B7%E8%A1%8C%E8%A8%88%E7%95%AB/" rel="tag"># 執行計畫</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://alice022990.github.io/2025/12/06/jwt-introduction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Alice Chiang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dev Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/12/06/jwt-introduction/" class="post-title-link" itemprop="url">JWT (JSON Web Token) 入門筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2025-12-06 18:10:26" itemprop="dateCreated datePublished" datetime="2025-12-06T18:10:26+08:00">2025-12-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2026-01-25 17:16:53" itemprop="dateModified" datetime="2026-01-25T17:16:53+08:00">2026-01-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/" itemprop="url" rel="index"><span itemprop="name">後端開發</span></a>
-                </span>
-                  , 
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/%E8%BA%AB%E4%BB%BD%E9%A9%97%E8%AD%89/" itemprop="url" rel="index"><span itemprop="name">身份驗證</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="JWT-介紹"><a href="#JWT-介紹" class="headerlink" title="JWT 介紹"></a>JWT 介紹</h2><h3 id="JWT-是什麼？"><a href="#JWT-是什麼？" class="headerlink" title="JWT 是什麼？"></a>JWT 是什麼？</h3><p>JWT (JSON Web Token) 是一種基於 JSON 的開放標準（RFC 7519），用於在各方之間<strong>將訊息作為 JSON 物件</strong>安全地傳輸。常用於身份驗證和信息交換。</p>
-<h3 id="JWT-的結構"><a href="#JWT-的結構" class="headerlink" title="JWT 的結構"></a>JWT 的結構</h3><p>JWT 由三個部分組成，用點（.）分隔：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">header.payload.signature</span><br></pre></td></tr></table></figure>
-<p>實際看起來像這樣：<br><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</code></p>
-<h4 id="1-Header（標頭）"><a href="#1-Header（標頭）" class="headerlink" title="1. Header（標頭）"></a>1. Header（標頭）</h4><p>標頭通常包含兩部分：</p>
-<ul>
-<li><strong><code>typ</code></strong>: Token 的類型，通常是 <code>JWT</code>。</li>
-<li><strong><code>alg</code></strong>: 所使用的簽名演算法，例如 <code>HMAC SHA256</code> 或 <code>RSA</code>。</li>
-</ul>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HS256&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;typ&quot;</span><span class="punctuation">:</span> <span class="string">&quot;JWT&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-Payload"><a href="#2-Payload" class="headerlink" title="2. Payload"></a>2. Payload</h4><p>Payload 是 JWT 的實質內容，用於存放想傳輸的<strong>宣告 (Claims)</strong>。宣告是關於實體（通常是使用者）和其他資料的陳述，因為 Payload 傳遞的訊息最後是透過 Base64 進行編碼，是可以逆向解碼的，所以<strong>不可以放機密資訊</strong>。<br>常見的宣告類型有三種：</p>
-<ul>
-<li><strong>註冊宣告 (Registered Claims)：</strong> 是 JWT 標準（RFC 7519）中預定義的聲明，建議使用，但非強制性。例如：<ul>
-<li><code>iss</code> (Issuer)：發行者，標識是誰創建了這個 Token</li>
-<li><code>iat</code> (Issued At Time)：發行時間</li>
-<li><code>exp</code> (Expiration Time)：過期時間</li>
-<li><code>sub</code> (Subject)：JWT 的使用者（通常放用戶 ID）</li>
-<li><code>aud</code> (Audience)：接收此 JWT 的收件人</li>
-</ul>
-</li>
-<li><strong>公有宣告 (Public Claims)：</strong> 使用者可自定義，但為了避免衝突，建議在 IANA JWT Registry 中定義，或使用防衝突的命名方式（如使用 URI）。</li>
-<li><strong>私有宣告 (Private Claims)：</strong> 為了在特定應用程式中共享資訊而創建的自定義宣告。</li>
-</ul>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1234567890&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;John Doe&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;iat&quot;</span><span class="punctuation">:</span> <span class="number">1516239022</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;exp&quot;</span><span class="punctuation">:</span> <span class="number">1516242622</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<h4 id="3-Signature（簽名）"><a href="#3-Signature（簽名）" class="headerlink" title="3. Signature（簽名）"></a>3. Signature（簽名）</h4><p>簽名用於驗證發送者是誰，並確保 Token 在傳輸過程中<strong>沒有被篡改</strong>。<br>簽名是這樣生成的：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Signature = HMACSHA256(</span><br><span class="line">  base64UrlEncode(header) + &quot;.&quot; + </span><br><span class="line">  base64UrlEncode(payload),</span><br><span class="line">  secret</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>它將 Base64Url 編碼後的標頭、Base64Url 編碼後的 payload，以及一個秘密金鑰 (secret)，一起使用簽名演算法（如 $HS256$）進行雜湊運算。</li>
-<li><strong>只有伺服器知道這個秘密金鑰</strong>。當伺服器收到 JWT 時，它會使用相同的演算法和秘密金鑰重新計算簽名。如果計算出的簽名與 Token 中的簽名匹配，則證明 Token 是有效的，且未被篡改。</li>
-</ul>
-<h3 id="JWT-的運作流程（以授權為例）"><a href="#JWT-的運作流程（以授權為例）" class="headerlink" title="JWT 的運作流程（以授權為例）"></a>JWT 的運作流程（以授權為例）</h3><ol>
-<li><strong>使用者登入：</strong> 使用者透過帳號密碼登入。</li>
-<li><strong>伺服器發行 Token：</strong> 驗證成功後，伺服器建立一個 JWT，用<strong>秘密金鑰</strong>進行簽名。</li>
-<li><strong>返回 Token</strong>：將 JWT 發送給客戶端</li>
-<li><strong>客戶端儲存 Token：</strong> 客戶端（例如瀏覽器）將 JWT 儲存起來（通常是放在 <strong><code>localStorage</code></strong> 或 <strong><code>Cookie</code></strong> 中）。</li>
-<li><strong>後續請求：</strong> 客戶端在後續的每一個需要授權的請求中，將 JWT 放在 <strong><code>Authorization</code></strong> 標頭中（通常格式為 <code>Bearer &lt;token&gt;</code>）發送給伺服器。</li>
-<li><strong>伺服器驗證：</strong><ul>
-<li>伺服器檢查 JWT 的格式、過期時間 (<code>exp</code>) 等。</li>
-<li>伺服器使用<strong>秘密金鑰</strong>驗證簽名。</li>
-<li>如果驗證通過，伺服器信任 Token 裡的資訊（例如使用者 ID、權限），並處理請求。</li>
-</ul>
-</li>
-</ol>
-<h3 id="JWT-的優缺點"><a href="#JWT-的優缺點" class="headerlink" title="JWT 的優缺點"></a>JWT 的優缺點</h3><p><strong>優點：</strong></p>
-<ul>
-<li>無狀態（Stateless）：伺服器不需儲存 Session 資訊</li>
-<li>跨域友好：可以在不同域名間，適用於微服務架構；相較之下，傳統 Cookie Session 容易遇到 CORS 問題。</li>
-<li>移動端友好：適合 App 使用</li>
-<li>傳遞輕巧，沒有額外儲存成本</li>
-<li>性能好：可存放一些使用者資訊，不需要查詢數據庫</li>
-</ul>
-<p><strong>缺點：</strong></p>
-<ul>
-<li>無法主動撤銷：Token 發出後，在過期前都有效</li>
-<li>資訊不宜過多：Token 會隨著每次請求攜帶，Payload 不應包含敏感或過大的資料。</li>
-<li>密鑰洩露風險：如果密鑰被盜，所有 Token 都不安全</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://alice022990.github.io/2025/11/19/pitfall-sqlcommand-executereader-exception/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Alice Chiang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dev Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/11/19/pitfall-sqlcommand-executereader-exception/" class="post-title-link" itemprop="url">踩坑記錄：ExecuteReader() 為何沒有拋出 SqlException</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2025-11-19 00:17:53 / Modified: 00:24:06" itemprop="dateCreated datePublished" datetime="2025-11-19T00:17:53+08:00">2025-11-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/" itemprop="url" rel="index"><span itemprop="name">後端開發</span></a>
-                </span>
-                  , 
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/%E8%B8%A9%E5%9D%91%E8%A8%98%E9%8C%84/" itemprop="url" rel="index"><span itemprop="name">踩坑記錄</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>記錄 SqlCommand.ExecuteReader() 沒有如預期拋出 SqlException 的問題，以及解決方案與原因分析。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/11/19/pitfall-sqlcommand-executereader-exception/">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://alice022990.github.io/2025/11/15/password-security-aspnetcore/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Alice Chiang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dev Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/11/15/password-security-aspnetcore/" class="post-title-link" itemprop="url">搞懂加密、雜湊、加鹽與 ASP.NET Core 密碼加密</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2025-11-15 17:07:41" itemprop="dateCreated datePublished" datetime="2025-11-15T17:07:41+08:00">2025-11-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-12-20 17:45:29" itemprop="dateModified" datetime="2025-12-20T17:45:29+08:00">2025-12-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/" itemprop="url" rel="index"><span itemprop="name">後端開發</span></a>
-                </span>
-                  , 
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">資訊安全</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>深入解析密碼儲存的安全機制，包含 Hash、Salt、Encoding、Encryption 的差異，以及 ASP.NET Core PasswordHasher 的實作原理與使用方式。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/11/15/password-security-aspnetcore/">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/12/06/jwt-introduction/" rel="prev" title="JWT (JSON Web Token) 入門筆記">
+      <i class="fa fa-chevron-left"></i> JWT (JSON Web Token) 入門筆記
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://alice022990.github.io/2025/10/20/first-post/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Alice Chiang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dev Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/10/20/first-post/" class="post-title-link" itemprop="url">建立自己的部落格</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2025-10-20 22:38:46" itemprop="dateCreated datePublished" datetime="2025-10-20T22:38:46+08:00">2025-10-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2026-01-25 17:18:25" itemprop="dateModified" datetime="2026-01-25T17:18:25+08:00">2026-01-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="使用技術"><a href="#使用技術" class="headerlink" title="使用技術"></a>使用技術</h2><ul>
-<li>Hexo + Next() + github page</li>
-</ul>
-<h2 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h2><h4 id="新增文章"><a href="#新增文章" class="headerlink" title="新增文章"></a>新增文章</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo new [layout] &lt;title&gt;</span><br><span class="line">hexo new <span class="string">&quot;My New Post&quot;</span> <span class="comment">#範例</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>[layout]</code>：默認是<code>post</code>，可以改成<code>draft</code>等其他的模版</li>
-<li><code>&lt;title&gt;</code>：文章標題</li>
-</ul>
-<h4 id="建置-部署到-github-page"><a href="#建置-部署到-github-page" class="headerlink" title="建置 + 部署到 github page"></a>建置 + 部署到 github page</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hexo c  <span class="comment">#clean 清除靜態檔案</span></span><br><span class="line">hexo g  <span class="comment">#generate 生成靜態檔案</span></span><br><span class="line"></span><br><span class="line">hexo s  <span class="comment">#server 本地伺服器</span></span><br><span class="line">hexo d  <span class="comment">#deploy 部署到 github page</span></span><br></pre></td></tr></table></figure>
-<h2 id="更改主題配置"><a href="#更改主題配置" class="headerlink" title="更改主題配置"></a>更改主題配置</h2><h4 id="inline-code-改顏色"><a href="#inline-code-改顏色" class="headerlink" title="inline code 改顏色"></a>inline code 改顏色</h4><ol>
-<li>在 source&#x2F;_data&#x2F; 目錄下建立一個名為 styles.styl<br>的自訂樣式檔案（如果它不存在）。</li>
-<li>在該檔案中加入你的自訂顏色規則。</li>
-</ol>
-   <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Change inline <span class="selector-tag">code</span> <span class="attribute">color</span> --&gt;</span><br><span class="line"><span class="selector-class">.post-body</span> <span class="selector-tag">code</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#990000</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol start="3">
-<li>修改主題設定檔 themes&#x2F;next&#x2F;_config.yml，找到 <code>custom_file_path</code>，將 <code>style</code> 前面的 # 註解拿掉，啟用這個自訂樣式檔案。</li>
-</ol>
-<h2 id="參考文章"><a href="#參考文章" class="headerlink" title="參考文章"></a>參考文章</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://moon-jam.me/Hexo-NexT_Github-Page_build-blog/">https://moon-jam.me/Hexo-NexT_Github-Page_build-blog/</a></li>
-<li><a target="_blank" rel="noopener" href="https://ithelp.ithome.com.tw/articles/10360656">https://ithelp.ithome.com.tw/articles/10360656</a></li>
-<li><a target="_blank" rel="noopener" href="https://hansblog.net/20240906/46ae/">https://hansblog.net/20240906/46ae/</a></li>
-<li><a target="_blank" rel="noopener" href="https://brainynight.github.io/notes/hexo-2-theme-next/">https://brainynight.github.io/notes/hexo-2-theme-next/</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
   
 
 
@@ -782,6 +424,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%83%E6%95%B8%E5%97%85%E6%8E%A2-Parameter-Sniffing"><span class="nav-number">1.</span> <span class="nav-text">參數嗅探 (Parameter Sniffing)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%81%8B%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">運作原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BD%9B%E5%9C%A8%E5%95%8F%E9%A1%8C"><span class="nav-number">1.2.</span> <span class="nav-text">潛在問題</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AF%84%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">範例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88"><span class="nav-number">1.4.</span> <span class="nav-text">解決方案</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-OPTION-RECOMPILE-%E6%AF%8F%E6%AC%A1%E9%87%8D%E6%96%B0%E7%B7%A8%E8%AD%AF"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. OPTION (RECOMPILE) - 每次重新編譯</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-OPTION-OPTIMIZE-FOR-%E6%8C%87%E5%AE%9A%E5%84%AA%E5%8C%96%E5%8F%83%E6%95%B8%E5%80%BC"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. OPTION (OPTIMIZE FOR) - 指定優化參數值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E4%BD%BF%E7%94%A8%E5%8D%80%E5%9F%9F%E8%AE%8A%E6%95%B8%EF%BC%88Local-Variables%EF%BC%89-%E9%81%BF%E5%85%8D%E5%8F%83%E6%95%B8%E5%97%85%E6%8E%A2"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. 使用區域變數（Local Variables） - 避免參數嗅探</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-OPTION-OPTIMIZE-FOR-UNKNOWN-%E4%BD%BF%E7%94%A8%E7%B5%B1%E8%A8%88%E5%B9%B3%E5%9D%87%E5%80%BC"><span class="nav-number">1.4.4.</span> <span class="nav-text">4. OPTION (OPTIMIZE FOR UNKNOWN) - 使用統計平均值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E8%A8%88%E7%95%AB%E6%8C%87%E5%BC%95-Plan-Guides-%E5%BC%B7%E5%88%B6%E7%89%B9%E5%AE%9A%E5%9F%B7%E8%A1%8C%E8%A8%88%E7%95%AB"><span class="nav-number">1.4.5.</span> <span class="nav-text">5. 計畫指引(Plan Guides) - 強制特定執行計畫</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%81%B8%E6%93%87%E5%BB%BA%E8%AD%B0"><span class="nav-number">1.4.6.</span> <span class="nav-text">選擇建議</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">1.5.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%B6%E4%BC%B8%E5%AD%B8%E7%BF%92"><span class="nav-number">1.6.</span> <span class="nav-text">延伸學習</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
